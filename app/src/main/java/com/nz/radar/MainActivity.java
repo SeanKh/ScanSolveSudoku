@@ -1,8 +1,14 @@
 package com.nz.radar;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,9 +33,11 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -55,27 +63,6 @@ public class MainActivity extends AppCompatActivity {
         OpenCVLoader.initDebug();
     }
 
-    public void displayToast2(View v){
-
-        Mat img = null;
-
-        try {
-            img = Utils.loadResource(getApplicationContext(), R.drawable.sudoku);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2BGRA);
-
-        Mat img_result = img.clone();
-        Imgproc.Canny(img, img_result, 80, 90);
-        Bitmap img_bitmap = Bitmap.createBitmap(img_result.cols(), img_result.rows(),Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(img_result, img_bitmap);
-        ImageView imageView = findViewById(R.id.img);
-        imageView.setImageBitmap(img_bitmap);
-    }
-    //private static final Mat crossKernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, new Size(3, 3));
-
     public void displayToast(View v) {
         Mat colorimg = null;
 
@@ -96,33 +83,89 @@ public class MainActivity extends AppCompatActivity {
         String FILENAME = "result.txt";
         String string = "Grabbed sudoku\n==============\n\n";
 
-        //save(b.toString(),FILENAME);
+        save(b.toString(),FILENAME);
         Toast.makeText(this,b.toString(),Toast.LENGTH_LONG);
     }
 
-    public void save(String text,String FILE_NAME) {
-        //String text = mEditText.getText().toString();
-        FileOutputStream fos = null;
+    public void checkPermission(){
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
 
-        try {
-            fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
-            fos.write(text.getBytes());
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        110);
 
-
-            Toast.makeText(this, "Saved to " + getFilesDir() + "/" + FILE_NAME,
-                    Toast.LENGTH_LONG).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
             }
+        } else {
+            // Permission has already been granted
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 110: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
+    public void save(String text,String FILE_NAME) {
+        checkPermission();
+        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        try
+        {
+            File dir = new File(fullPath);
+
+            if (!dir.getParentFile().exists()) {
+                dir.getParentFile().mkdirs();
+            }
+
+            OutputStream fOut = null;
+            File file = new File(fullPath, FILE_NAME);
+            if(file.getParentFile().exists())
+                file.getParentFile().delete();
+            file.getParentFile().createNewFile();
+            fOut = new FileOutputStream(file);
+            fOut.write(text.getBytes());
+            // 100 means no compression, the lower you go, the stronger the compression
+
+            fOut.flush();
+            fOut.close();
+            Toast.makeText(this, "Saved to " + fullPath + "/" + FILE_NAME,
+                    Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e)
+        {
+            Log.e("saveToExternalStorage()", e.getMessage());
         }
     }
 
