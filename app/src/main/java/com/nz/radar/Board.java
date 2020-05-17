@@ -58,12 +58,12 @@ public class Board {
                 sb.append(m[row][col]);
                 sb.append(" ");
                 if ((col+1) % cellSize == 0) {
-                    sb.append(" ");
+                    sb.append("");
                 }
             }
             sb.append("\n");
             if ((row+1) % cellSize == 0) {
-                sb.append("\n");
+                //sb.append("\n");
             }
         }
         return sb.toString();

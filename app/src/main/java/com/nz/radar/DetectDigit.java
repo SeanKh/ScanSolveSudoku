@@ -30,7 +30,13 @@ public class DetectDigit {
 
     private void init(Mat img) {
 
+        // Converting the image to gray scale and
+        // saving it in the dst matrix
+        Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
+
         Size cellSize = new Size(SZ, SZ);
+
+        //Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 
         int cols = img.width() / 20;
         int rows = img.height() / 20;

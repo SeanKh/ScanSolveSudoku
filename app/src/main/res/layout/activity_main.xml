@@ -1,24 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Display Toast Message"
-        android:onClick="displayToast"
+        android:text="Logo"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
         />
-
-    <ImageView
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/sudoku2"
-        android:id="@+id/img"
-        android:adjustViewBounds="true"
+        android:text="Sudoku Solver"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+android:layout_below="@+id/logo"
         />
+    <LinearLayout
+        android:id="@+id/firstBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/name"
+        android:layout_marginTop="150dp"
+        >
 
-</LinearLayout>
+        <Button
+            android:id="@+id/loadPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="loadPicture"
+            android:text="Load picture"  />
+
+        <Button
+            android:id="@+id/takePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="takePicture"
+            android:text="Take picture"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/secondBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/firstBlock"
+        android:layout_marginTop="40dp"
+        >
+
+        <Button
+            android:id="@+id/loadFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="loadFile"
+            android:text="Load file"  />
+
+        <Button
+            android:id="@+id/loadSavedSolution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="loadSavedSolution"
+            android:text="Load Saved Solution"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/secondBlock"
+        android:layout_marginTop="40dp"
+        >
+
+        <Button
+            android:id="@+id/enterManually"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="enterManually"
+            android:text="Enter manually"  />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
