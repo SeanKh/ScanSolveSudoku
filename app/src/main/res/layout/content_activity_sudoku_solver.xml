@@ -8,12 +8,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-
+    android:layout_marginTop="53dp"
     tools:context=".SudokuSolver.SudokuSolverMainActivity"
     tools:showIn="@layout/activity_sudoku_solver">
 
-
     <GridView
+        android:layout_below="@+id/logo"
         android:background="@drawable/grid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,8 +35,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
 
-        android:layout_toEndOf="@+id/solveButton"
-        android:layout_toRightOf="@+id/solveButton">
+        android:layout_toEndOf="@+id/saveSolution"
+        android:layout_toRightOf="@+id/saveSolution">
 
 
         <Button android:text="1"
@@ -113,5 +113,16 @@
         android:onClick="solvePuzzle"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="40dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Solution"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/saveSolution"
+
+        android:onClick="saveSolution"
+        android:layout_toRightOf="@+id/solveButton"
+        android:layout_toEndOf="@+id/solveButton" />
 
 </RelativeLayout>

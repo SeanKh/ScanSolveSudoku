@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.nz.radar"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -20,6 +20,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -30,6 +33,9 @@ dependencies {
     implementation project(path: ':openCVLibrary343')
     implementation group: 'com.google.guava', name: 'guava', version: '21.0'
     androidTestImplementation 'junit:junit:4.12'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+
 //Thanks for using https://jar-download.com
 
 }

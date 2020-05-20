@@ -3,56 +3,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
+    <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logo"
+        android:src="@drawable/logo"
         android:gravity="center"
         android:layout_marginTop="50dp"
         android:layout_gravity="center_horizontal"
         android:layout_centerHorizontal="true"
         />
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sudoku Solver"
-        android:gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center_horizontal"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:layout_centerHorizontal="true"
-android:layout_below="@+id/logo"
-        />
+
     <LinearLayout
         android:id="@+id/firstBlock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/name"
-        android:layout_marginTop="150dp"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="110dp"
         >
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/loadPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default"
+            android:layout_marginRight="10dp"
+            android:padding="10dp"
+            android:text="Load picture"
+            android:textColor="@color/cardview_light_background"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
+            android:onClick="loadPicture"
+            />
 
-        <Button
+        <!--<Button
             android:id="@+id/loadPicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="loadPicture"
-            android:text="Load picture"  />
-
-        <Button
+            android:text="Load picture"  />-->
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/takePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default"
+            android:padding="10dp"
+            android:text="Take picture"
+            android:textColor="@color/cardview_light_background"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
+            android:onClick="takePicture"
+            />
+        <!--<Button
             android:id="@+id/takePicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="takePicture"
             android:text="Take picture"
-            />
+            />-->
 
     </LinearLayout>
 
@@ -65,39 +80,40 @@ android:layout_below="@+id/logo"
         android:layout_below="@id/firstBlock"
         android:layout_marginTop="40dp"
         >
-
-        <Button
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/loadFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default"
+            android:layout_marginRight="10dp"
+            android:text="Load file"
+            android:textColor="@color/cardview_light_background"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
+            android:onClick="loadFile"
+            />
+        <!--<Button
             android:id="@+id/loadFile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="loadFile"
-            android:text="Load file"  />
-
-        <Button
-            android:id="@+id/loadSavedSolution"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="loadSavedSolution"
-            android:text="Load Saved Solution"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/secondBlock"
-        android:layout_marginTop="40dp"
-        >
-
-        <Button
+            android:text="Load file"  />-->
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/enterManually"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/shape_default"
+            android:padding="10dp"
+            android:text="Enter manually"
+            android:textColor="@color/cardview_light_background"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
             android:onClick="enterManually"
-            android:text="Enter manually"  />
+            />
+
+
 
     </LinearLayout>
 

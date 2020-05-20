@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -104,12 +105,12 @@ public class TextAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(final int position, final View convertView, ViewGroup parent) {
-        TextView textView;
+        EditText textView;
 
 
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
-            textView = new TextView(mContext);
+            textView = new EditText(mContext);
             textView.setLayoutParams(new GridView.LayoutParams(85, 85));
             textView.setPadding(0, 0, 0, 0);
             textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
@@ -124,7 +125,7 @@ public class TextAdapter extends BaseAdapter {
 
 
         } else {
-            textView = (TextView) convertView;
+            textView = (EditText) convertView;
         }
         if (grid[position] != 0) {
             textView.setEnabled(true);

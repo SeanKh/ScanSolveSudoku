@@ -1,11 +1,15 @@
 package com.nz.radar.SudokuSolver;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Environment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,12 +17,22 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.common.base.Joiner;
+import com.nz.radar.Board;
+import com.nz.radar.MainActivity;
 import com.nz.radar.R;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,18 +48,36 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
 
         assetManager = getAssets();
         gridview = (GridView) findViewById(R.id.gridView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String path = intent.getStringExtra("image-path");
+        if(intent.hasExtra("image-path")) {
+            String path = intent.getStringExtra("image-path");
+            if(path.substring(0,8).equals("file:///")) {
+                path = path.substring(8);
+            }
+            try {
+                File file = new File(path);
+                FileInputStream inputStream = new FileInputStream(file);
 
-        try {
-            File file = new File(path);
-            FileInputStream inputStream = new FileInputStream(file);
+                //InputStream inputStream = assetManager.open(path);
+                gridview.setAdapter(new TextAdapter(this, inputStream));
+            } catch (IOException e) {
+                Log.i("Yo", "OH NO");
+            }
+        }else{
 
-            //InputStream inputStream = assetManager.open(path);
-            gridview.setAdapter(new TextAdapter(this, inputStream));
-        } catch (IOException e) {
-            Log.i("Yo", "OH NO");
+
+            try {
+                InputStream inputStream = assetManager.open("empty.in");
+
+
+                //InputStream inputStream = assetManager.open(path);
+                gridview.setAdapter(new TextAdapter(this, inputStream));
+            } catch (IOException e) {
+                Log.i("Yo", "OH NO");
+            }
         }
 
         Button mClickButton1 = (Button)findViewById(R.id.one);
@@ -70,6 +102,31 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         mClickButton0.setOnClickListener(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_home) {
+            Intent intent = new Intent(SudokuSolverMainActivity.this, MainActivity.class);
+
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void populateGrid(View view) {
         try {
             InputStream inputStream = assetManager.open("empty.in");
@@ -81,6 +138,92 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         }
 
     }
+
+    public String save(String text,String FILE_NAME) {
+        checkPermission();
+        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        try
+        {
+            File dir = new File(fullPath);
+
+            if (!dir.getParentFile().exists()) {
+                dir.getParentFile().mkdirs();
+            }
+
+            OutputStream fOut = null;
+            File file = new File(fullPath, FILE_NAME);
+            if(file.getParentFile().exists())
+                file.getParentFile().delete();
+            file.getParentFile().createNewFile();
+            fOut = new FileOutputStream(file);
+            fOut.write(text.getBytes());
+            // 100 means no compression, the lower you go, the stronger the compression
+
+            fOut.flush();
+            fOut.close();
+            fullPath+="/"+FILE_NAME;
+            Toast.makeText(this, "Saved to " + fullPath,
+                    Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e)
+        {
+            Log.e("saveToExternalStorage()", e.getMessage());
+        }
+        return fullPath;
+    }
+
+    public void checkPermission(){
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        110);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 110: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
+
 
     public static Integer[][] make2d(Integer[] var){
         Integer[][] out = new Integer[9][9];
@@ -112,7 +255,18 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
 
     }
 
-    public void emptyCell(View view){
+    public void saveSolution(View view){
+        TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
+        List<Integer> list=new ArrayList<>();
+        for(int n=0;n<9;n++){
+            for(int z=0;z<9;z++){
+                list.add(textAdapter.grid2d[n][z]);
+            }
+        }
+        Board b = Board.of(9, Joiner.on(" ").join(list));
+
+        String FILENAME = "resultAfterSolving.txt";
+        save(b.toString(),FILENAME);
 
     }
 

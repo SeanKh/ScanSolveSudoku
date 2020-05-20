@@ -4,17 +4,24 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -45,6 +52,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
 import static com.nz.radar.FeatureDetector.CONTAIN_DIGIT_SUB_MATRIX_DENSITY;
 import static org.opencv.imgproc.Imgproc.CHAIN_APPROX_SIMPLE;
 import static org.opencv.imgproc.Imgproc.RETR_TREE;
@@ -57,34 +66,99 @@ import static org.opencv.imgproc.Imgproc.warpPerspective;
 
 
 public class SudokuImageProcessingActivity extends AppCompatActivity {
-
+    Mat colorimg=null;
     Uri imageUri;
     ImageView myImage;
+
+    CircularProgressButton circularProgressButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_processing);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        circularProgressButton=findViewById(R.id.btnScan);
+        circularProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AsyncTask<String,String,String> scanImage=new AsyncTask<String,String,String>() {
+                    @Override
+                    protected String doInBackground(String... voids) {
+                        doImageProcessing();
+                        return "done";
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        if(s.equals("done")){
+                            Toast.makeText(SudokuImageProcessingActivity.this,"Sudoku Scan done",Toast.LENGTH_LONG).show();
+                            circularProgressButton.doneLoadingAnimation(Color.parseColor("#333639"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_done_white_48dp));
+
+                        }
+                    }
+                };
+                circularProgressButton.startAnimation();
+                scanImage.execute();
+            }
+        });
+
+        myImage = findViewById(R.id.img);
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        imageUri = Uri.parse(intent.getStringExtra("image-uri"));
+        if (intent.hasExtra("image-uri")) {
+            imageUri = Uri.parse(intent.getStringExtra("image-uri"));
+            myImage.setImageURI(imageUri);
+        }
+        else{
+            Bitmap color=(Bitmap) getIntent().getExtras().get("photo");
+            /*byte[] byteArray = getIntent().getByteArrayExtra("photo");
+            Bitmap bmp32 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            colorimg=new Mat();
+            Utils.bitmapToMat(bmp32, colorimg);*/
+            myImage.setImageBitmap(color);
+        }
 
         //String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
 
         OpenCVLoader.initDebug();
-
-        myImage = findViewById(R.id.img);
-
-        myImage.setImageURI(imageUri);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
-    public void displayToast(View v) {
-        Mat colorimg = new Mat();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        BitmapDrawable drawable = (BitmapDrawable) myImage.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_home) {
+            Intent intent = new Intent(SudokuImageProcessingActivity.this, MainActivity.class);
 
-        Utils.bitmapToMat(bitmap, colorimg);
+            startActivity(intent);
+            return true;
+        }
 
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void doImageProcessing() {
+
+        if(colorimg==null) {
+            colorimg = new Mat();
+
+            BitmapDrawable drawable = (BitmapDrawable) myImage.getDrawable();
+            Bitmap bitmap = drawable.getBitmap();
+
+            Utils.bitmapToMat(bitmap, colorimg);
+        }
         /*Mat bw = getSudokuArea(colorimg);
 
         Bitmap img_bitmap = Bitmap.createBitmap(bw.cols(), bw.rows(),Bitmap.Config.ARGB_8888);
