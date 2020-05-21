@@ -120,7 +120,8 @@ public class DetectDigit {
 
             warpAffine(digit, res, A, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
         }catch (Exception e){
-            Log.d("e","e");
+            Log.d("e
+            ","e");
         }*/
 
         return res;

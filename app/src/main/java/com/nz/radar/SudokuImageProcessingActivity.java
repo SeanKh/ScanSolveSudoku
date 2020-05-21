@@ -419,7 +419,7 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
     }
     public List<Integer> extractDigits(Mat m) {
         Mat sudoku = getSudokuArea(m);
-        String t=sudoku.dump();
+
         if (sudoku == null) {
             return null;
         }
@@ -473,7 +473,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
 
         for(int i = 0; i < cells.size(); i++ ) {
             Mat cell = cells.get(i);
-            //String v=cell.dump();
             com.google.common.base.Optional<Rect> box = digitBoxes.get(i);
 
             int d = 0;
@@ -481,7 +480,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
             if (box.isPresent() && CONTAIN_DIGIT_SUB_MATRIX_DENSITY.apply(cell)) {
                 /* cut current cell to the finded box */
                 Mat cutted = new Mat(cell, box.get()).clone();
-                //String list=cutted.dump();
                 Imgproc.rectangle(cell, box.get().tl(), box.get().br(), Scalar.all(255));
                 cuts.add(cutted);
                 d = detect.detect(cutted);
