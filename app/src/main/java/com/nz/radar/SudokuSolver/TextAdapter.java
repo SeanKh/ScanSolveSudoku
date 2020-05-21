@@ -8,11 +8,15 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nz.radar.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -142,14 +146,15 @@ public class TextAdapter extends BaseAdapter {
 
                         setGridCellClicked(position);
                         long color = 0xffffffffL & textView.getCurrentTextColor();
-                        Toast.makeText(view.getContext(), Long.toHexString(color),
-                                Toast.LENGTH_LONG).show();
+                        //Toast.makeText(view.getContext(), Long.toHexString(color),Toast.LENGTH_LONG).show();
                         //textView.getBackground().setAlpha(100);
-                        textView.setBackgroundColor(Color.parseColor("#a4c639"));
+                        //textView.setBackgroundColor(Color.parseColor("#a4c639"));
                         //textView.setBackgroundResource(R.color.colorAccent);
-
-
                         setTextViewNeeded(textView);
+
+                        Animation animation= AnimationUtils.loadAnimation(view.getContext(), R.anim.scale);
+                        textView.clearAnimation();
+                        textView.startAnimation(animation);
                         updateGrid();
                     }
                     return true;
@@ -170,6 +175,7 @@ public class TextAdapter extends BaseAdapter {
             }else  getTextViewNeeded().setText(String.valueOf(grid[getGridCellClicked()]));
             setClickedButton(10);
             //getTextViewNeeded().setBackgroundColor(Color.TRANSPARENT);
+            getTextViewNeeded().clearAnimation();
 
         }
     }

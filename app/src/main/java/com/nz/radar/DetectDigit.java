@@ -1,5 +1,7 @@
 package com.nz.radar;
 
+import android.util.Log;
+
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -95,10 +97,15 @@ public class DetectDigit {
         double s = 1.5*digit.height()/SZ;
 
         Moments m = moments(digit);
-
-        double c1_0 = m.get_m10()/m.get_m00();
-        double c1_1 = m.get_m01()/m.get_m00();
-
+        double c1_0 = m.get_m10() / m.get_m00();
+        double c1_1 = m.get_m01() / m.get_m00();
+        /*if(m.get_m00()==0){
+             c1_0=1.0;
+             c1_1=1.0;
+        }else {
+             c1_0 = m.get_m10() / m.get_m00();
+             c1_1 = m.get_m01() / m.get_m00();
+        }*/
         double c0_0= SZ/2, c0_1 = SZ/2;
 
         double t_0 = c1_0 - s*c0_0;
@@ -108,8 +115,14 @@ public class DetectDigit {
 
         A.put(0,0, s, 0, t_0);
         A.put(1,0, 0, s, t_1);
-
         warpAffine(digit, res, A, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
+        /*try {
+
+            warpAffine(digit, res, A, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
+        }catch (Exception e){
+            Log.d("e","e");
+        }*/
+
         return res;
     }
 

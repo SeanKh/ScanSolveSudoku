@@ -39,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int CAMERA_REQUEST = 1888;
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (requestCode == PICK_IMAGE  && resultCode == RESULT_OK) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
 
             Uri imageUri = data.getData();/* This is the Uri you got from the gallery */
             Intent intent = new Intent(MainActivity.this, SudokuImageProcessingActivity.class);
