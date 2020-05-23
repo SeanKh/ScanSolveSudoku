@@ -200,7 +200,7 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
             }
         } else {
-            Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
         }
     }
     static final Integer WRITE_EXST = 0x3;
@@ -241,38 +241,16 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
 
             }
 
-            Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
         }else{
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
 
-        switch (requestCode) {
-            case 110: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }*/
 
     public String save(String text,String FILE_NAME) {
-        //checkPermission();
+
         String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try
         {
@@ -303,9 +281,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         }
         return fullPath;
     }
-
-    private int elementType = Imgproc.CV_SHAPE_RECT;
-    private int kernelSize = 0;
 
     public Mat preprocess(Mat colorimg) {
 
@@ -435,8 +410,14 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 Rect rect = new Rect(new Point(col * size, row * size), cellSize);
-                Mat digit = new Mat(m, rect).clone();
-                cells.add(digit);
+                try {
+                    Mat digit = new Mat(m, rect).clone();
+                    cells.add(digit);
+                }catch (Exception e){
+                    Log.d("E","e");
+                }
+
+
                 /*try {
                     Mat digit = new Mat(m, rect).clone();
                     cells.add(digit);

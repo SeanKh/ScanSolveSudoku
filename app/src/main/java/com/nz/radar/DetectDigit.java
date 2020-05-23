@@ -1,6 +1,7 @@
 package com.nz.radar;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -86,8 +87,13 @@ public class DetectDigit {
 
         M.put(0, 0, 1, skew, -0.5 * SZ * skew, 0, 1, 0);
 
-        warpAffine(img, result, M, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
+        try {
 
+            warpAffine(img, result, M, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
+
+        }catch (Exception e){
+            Log.e("Error","Warp affine");
+        }
         return result;
     }
 
@@ -115,14 +121,13 @@ public class DetectDigit {
 
         A.put(0,0, s, 0, t_0);
         A.put(1,0, 0, s, t_1);
-        warpAffine(digit, res, A, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
-        /*try {
+        //warpAffine(digit, res, A, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
+        try {
 
             warpAffine(digit, res, A, new Size(SZ, SZ), Imgproc.WARP_INVERSE_MAP | Imgproc.INTER_LINEAR);
         }catch (Exception e){
-            Log.d("e
-            ","e");
-        }*/
+            Log.e("Error","Warp affine");
+        }
 
         return res;
     }

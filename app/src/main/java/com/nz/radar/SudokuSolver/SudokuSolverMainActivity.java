@@ -39,7 +39,6 @@ import java.util.List;
 public class SudokuSolverMainActivity extends AppCompatActivity implements View.OnClickListener {
     GridView gridview;
     AssetManager assetManager;
-    int puzzleLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,11 +126,11 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         return super.onOptionsItemSelected(item);
     }
 
-    public void populateGrid(View view) {
+    public void emptyGrid(View view) {
         try {
             InputStream inputStream = assetManager.open("empty.in");
             gridview.setAdapter(new TextAdapter(this, inputStream));
-            puzzleLevel = 0;
+
         } catch (IOException e) {
             Log.i("Yo", "OH NO");
 
@@ -354,41 +353,42 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
     @Override
     public void onClick(View v) {
         TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
-
-        switch (v.getId()){
-            case R.id.one:
-                textAdapter.setClickedButton(1);
-                break;
-            case R.id.two:
-                textAdapter.setClickedButton(2);
-                break;
-            case R.id.three:
-                textAdapter.setClickedButton(3);
-                break;
-            case R.id.four:
-                textAdapter.setClickedButton(4);
-                break;
-            case R.id.five:
-                textAdapter.setClickedButton(5);
-                break;
-            case R.id.six:
-                textAdapter.setClickedButton(6);
-                break;
-            case R.id.seven:
-                textAdapter.setClickedButton(7);
-                break;
-            case R.id.eight:
-                textAdapter.setClickedButton(8);
-                break;
-            case R.id.nine:
-                textAdapter.setClickedButton(9);
-                break;
-            case R.id.zero:
-                textAdapter.setClickedButton(0);
-                break;
-            default:
-                textAdapter.setClickedButton(10);
-                break;
+        if(textAdapter.getClickedOnCell()==true){
+            switch (v.getId()){
+                case R.id.one:
+                    textAdapter.setClickedButton(1);
+                    break;
+                case R.id.two:
+                    textAdapter.setClickedButton(2);
+                    break;
+                case R.id.three:
+                    textAdapter.setClickedButton(3);
+                    break;
+                case R.id.four:
+                    textAdapter.setClickedButton(4);
+                    break;
+                case R.id.five:
+                    textAdapter.setClickedButton(5);
+                    break;
+                case R.id.six:
+                    textAdapter.setClickedButton(6);
+                    break;
+                case R.id.seven:
+                    textAdapter.setClickedButton(7);
+                    break;
+                case R.id.eight:
+                    textAdapter.setClickedButton(8);
+                    break;
+                case R.id.nine:
+                    textAdapter.setClickedButton(9);
+                    break;
+                case R.id.zero:
+                    textAdapter.setClickedButton(0);
+                    break;
+                default:
+                    textAdapter.setClickedButton(10);
+                    break;
+            }
         }
         textAdapter.updateGrid();
 

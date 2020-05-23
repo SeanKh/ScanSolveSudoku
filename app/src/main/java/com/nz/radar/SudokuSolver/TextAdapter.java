@@ -139,22 +139,32 @@ public class TextAdapter extends BaseAdapter {
         }
 
             textView.setOnTouchListener(new View.OnTouchListener() {
+
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
 
                     if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-
+                        if(getTextViewNeeded()!=null) getTextViewNeeded().clearAnimation();
                         setGridCellClicked(position);
                         long color = 0xffffffffL & textView.getCurrentTextColor();
                         //Toast.makeText(view.getContext(), Long.toHexString(color),Toast.LENGTH_LONG).show();
                         //textView.getBackground().setAlpha(100);
                         //textView.setBackgroundColor(Color.parseColor("#a4c639"));
                         //textView.setBackgroundResource(R.color.colorAccent);
-                        setTextViewNeeded(textView);
+
 
                         Animation animation= AnimationUtils.loadAnimation(view.getContext(), R.anim.scale);
                         textView.clearAnimation();
-                        textView.startAnimation(animation);
+                        if(clickedOnCell==true)
+                        {
+                            textView.clearAnimation();
+                            clickedOnCell=false;
+                        }
+                        else{
+                            textView.startAnimation(animation);
+                            clickedOnCell=true;
+                        }
+                        setTextViewNeeded(textView);
                         updateGrid();
                     }
                     return true;
@@ -165,18 +175,29 @@ public class TextAdapter extends BaseAdapter {
         return textView;
     }
 
+    public boolean getClickedOnCell() {
+        return clickedOnCell;
+    }
+
+    public void setClickedOnCell(boolean clickedOnCell) {
+        this.clickedOnCell = clickedOnCell;
+    }
+
+    boolean clickedOnCell=false;
     @SuppressWarnings("ResourceAsColor")
     public void updateGrid(){
-        if(getClickedButton()!=10 && getGridCellClicked()!=100){
-            grid[getGridCellClicked()]=getClickedButton();
-            grid2d=SudokuSolverMainActivity.make2d(grid);
-            if(getClickedButton()==0){
-                getTextViewNeeded().setText("");
-            }else  getTextViewNeeded().setText(String.valueOf(grid[getGridCellClicked()]));
-            setClickedButton(10);
-            //getTextViewNeeded().setBackgroundColor(Color.TRANSPARENT);
-            getTextViewNeeded().clearAnimation();
+        if(getGridCellClicked()!=100) {
+            if (getClickedButton() != 10 && clickedOnCell == true) {
+                grid[getGridCellClicked()] = getClickedButton();
+                grid2d = SudokuSolverMainActivity.make2d(grid);
+                if (getClickedButton() == 0) {
+                    getTextViewNeeded().setText("");
+                } else getTextViewNeeded().setText(String.valueOf(grid[getGridCellClicked()]));
+                setClickedButton(10);
+                //getTextViewNeeded().setBackgroundColor(Color.TRANSPARENT);
+                getTextViewNeeded().clearAnimation();
 
+            }
         }
     }
 }

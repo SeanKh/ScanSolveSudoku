@@ -24,6 +24,8 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
+
     <include layout="@layout/content_activity_sudoku_solver" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
