@@ -128,6 +128,8 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
 
     public void emptyGrid(View view) {
         try {
+            TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
+            textAdapter.getTextViewNeeded().clearAnimation();
             InputStream inputStream = assetManager.open("empty.in");
             gridview.setAdapter(new TextAdapter(this, inputStream));
 
