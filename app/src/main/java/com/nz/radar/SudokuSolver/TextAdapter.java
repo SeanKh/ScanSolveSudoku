@@ -86,6 +86,7 @@ public class TextAdapter extends BaseAdapter {
                         col = 0;
                         row++;
                     }
+                    if(element.equals("null")){element="0";}
                     grid[i] = Integer.valueOf(element);
                     grid2d[row][col] = Integer.valueOf(element);
                 }
@@ -145,6 +146,7 @@ public class TextAdapter extends BaseAdapter {
 
                     if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                         if(getTextViewNeeded()!=null) getTextViewNeeded().clearAnimation();
+                        if(getTextViewNeeded()!=textView) clickedOnCell=false;
                         setGridCellClicked(position);
                         long color = 0xffffffffL & textView.getCurrentTextColor();
                         //Toast.makeText(view.getContext(), Long.toHexString(color),Toast.LENGTH_LONG).show();

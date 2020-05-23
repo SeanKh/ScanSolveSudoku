@@ -1,9 +1,11 @@
 package com.nz.radar;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -12,6 +14,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -26,12 +29,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-        checkPermission();
+
         OpenCVLoader.initDebug();
+        checkPermission();
     }
 
     private void askForPermission(String permission, Integer requestCode) {
@@ -40,60 +45,103 @@ public class MainActivity extends AppCompatActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
 
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+                alertBuilder.setCancelable(true);
+                alertBuilder.setTitle("Access Permission Info");
+                alertBuilder.setMessage("App needs permission to access images, files on your phone.");
+                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{permission},
+                                requestCode);
+                    }
+                });
+
+                AlertDialog alert = alertBuilder.create();
+                alert.show();
+
                 //This is called if user has denied the permission before
                 //In this case I am just asking the permission again
-                ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+                //ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
 
             } else {
 
                 ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
             }
         } else {
+
             //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
         }
     }
+
     static final Integer WRITE_EXST = 0x3;
     static final Integer READ_EXST = 0x4;
     static final Integer CAMERA_EXST  = 0x5;
     public void checkPermission(){
 
+        /*AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setCancelable(true);
+        alertBuilder.setTitle("Permission necessary");
+        alertBuilder.setMessage("App needs permission to read files.");
+        alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,WRITE_EXST);
+
+                askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE,READ_EXST);
+
+            }
+        });
+
+        AlertDialog alert = alertBuilder.create();
+        alert.show();*/
+
         askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,WRITE_EXST);
 
-        askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE,READ_EXST);
+        //askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE,READ_EXST);
 
-        askForPermission(Manifest.permission.CAMERA,CAMERA_EXST);
     }
 
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED){
-            switch (requestCode) {
-                //Location
 
-                //Write external Storage
-                case 3:
-                    break;
-                //Read External Storage
-                case 4:
-                    Intent imageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(imageIntent, 11);
-                    break;
-                //Camera
-                case 5:
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, 12);
-                    }
-                    break;
+        if(permissions.length!=0) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
+                switch (requestCode) {
+                    //Location
 
+                    //Write external Storage
+                    case 3:
+                        break;
+                    //Read External Storage
+                    case 4:
+                        /*Intent imageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(imageIntent, 11);*/
+                        break;
+                    //Camera
+                    case 5:
+                        Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        Uri uri  = Uri.parse("file:///sdcard/photo.jpg");
+                        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
+                        startActivityForResult(photo,CAMERA_REQUEST);
+                        /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            startActivityForResult(takePictureIntent, 12);
+                        }*/
+                        break;
+
+                }
+
+                //Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                //Toast.makeText(this, "App will launch only with granted permission", Toast.LENGTH_SHORT).show();
+                //checkPermission();
+                this.finishAffinity();
             }
-
-            //Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
-        }else{
-            //Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
         }
     }
     public static final int PICK_IMAGE = 1;
@@ -138,7 +186,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (exit) {
-            finish(); // finish activity
+            //finish(); // finish activity
+            this.finishAffinity();
         } else {
             Toast.makeText(this, "Press Back again to Exit.",
                     Toast.LENGTH_SHORT).show();
@@ -155,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadPicture(View v){
+
         /*Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.setType("image/*");
@@ -168,19 +218,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takePicture(View v){
-        Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri uri  = Uri.parse("file:///sdcard/photo.jpg");
-        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(photo,CAMERA_REQUEST);
+        askForPermission(Manifest.permission.CAMERA,CAMERA_EXST);
+
     }
     private static final int gallery=12;
 
     public void loadFile(View v){
-        String type="*/*";
+        String[] mimeTypes =
+                {"text/plain"
+                        };
 
-        Intent i=new Intent(Intent.ACTION_GET_CONTENT);
-        i.setType(type);
-        startActivityForResult(Intent.createChooser(i,"select file") ,gallery);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
+            if (mimeTypes.length > 0) {
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            }
+        } else {
+            String mimeTypesStr = "";
+            for (String mimeType : mimeTypes) {
+                mimeTypesStr += mimeType + "|";
+            }
+            intent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
+        }
+        startActivityForResult(Intent.createChooser(intent,"ChooseFile"), gallery);
+
     }
 
     public void enterManually(View v){

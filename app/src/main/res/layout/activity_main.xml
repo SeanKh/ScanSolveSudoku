@@ -88,12 +88,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_default"
+            android:padding="6dp"
             android:layout_marginRight="10dp"
-            android:text="Load file"
+            android:text="LOAD .txt FILE"
             android:textColor="@color/cardview_light_background"
             app:spinning_bar_color="#FFF"
             app:spinning_bar_padding="6dp"
             app:spinning_bar_width="4dp"
+            android:textAllCaps="false"
             android:onClick="loadFile"
             />
 
@@ -103,6 +105,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/shape_default"
             android:padding="10dp"
+
             android:text="Enter manually"
             android:textColor="@color/cardview_light_background"
             app:spinning_bar_color="#FFF"

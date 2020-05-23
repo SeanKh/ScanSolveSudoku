@@ -5,9 +5,9 @@
 5    android:versionName="3.4.3" >
 6
 7    <uses-sdk
-8        android:minSdkVersion="15"
-8-->/Users/shukhratkhaydarov/Desktop/Bachelor_Thesis/Source_CODE/Working/Android Studio 2/openCVLibrary343/src/main/AndroidManifest.xml
+8        android:minSdkVersion="16"
+8-->/Users/shukhratkhaydarov/Downloads/test-IMAGE-PROCESSING/Sudoku-ImageProcessing-Working/openCVLibrary343/src/main/AndroidManifest.xml
 9        android:targetSdkVersion="28" />
-9-->/Users/shukhratkhaydarov/Desktop/Bachelor_Thesis/Source_CODE/Working/Android Studio 2/openCVLibrary343/src/main/AndroidManifest.xml
+9-->/Users/shukhratkhaydarov/Downloads/test-IMAGE-PROCESSING/Sudoku-ImageProcessing-Working/openCVLibrary343/src/main/AndroidManifest.xml
 10
 11</manifest> <!-- <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="21" -->

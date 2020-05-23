@@ -116,7 +116,7 @@
             android:textSize="25sp"
             android:id="@+id/nine"/>
         <Button
-            android:text="0"
+            android:text="C"
             android:id="@+id/zero"
             android:textSize="25sp"
 
