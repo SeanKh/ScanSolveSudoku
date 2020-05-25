@@ -13,7 +13,7 @@
     tools:showIn="@layout/activity_sudoku_solver">
 
     <GridView
-        android:layout_below="@+id/logo"
+
         android:background="@drawable/grid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,181 +31,211 @@
         android:layout_height="fill_parent"
         android:layout_below="@+id/gridView"
         >
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-        <LinearLayout
-            android:id="@+id/funcButtons"
-            android:layout_width="wrap_content"
+        <LinearLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
+            android:orientation="vertical"
             >
-            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-                android:background="@drawable/shape_default"
-                android:textColor="@color/cardview_light_background"
-                app:spinning_bar_color="#FFF"
-                app:spinning_bar_padding="2dp"
-                app:spinning_bar_width="4dp"
-
+            <LinearLayout
+                android:id="@+id/funcButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Empty Grid"
-                android:id="@+id/easy"
-                android:onClick="emptyGrid"
-                />
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
 
-            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-                android:background="@drawable/shape_default"
-                android:textColor="@color/cardview_light_background"
-                app:spinning_bar_color="#FFF"
-                app:spinning_bar_padding="2dp"
-                app:spinning_bar_width="4dp"
+                >
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="2dp"
+                    app:spinning_bar_width="4dp"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Empty Grid"
+                    android:id="@+id/easy"
+                    android:onClick="emptyGrid"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp" />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="2dp"
+                    app:spinning_bar_width="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Solve"
+                    android:id="@+id/solveButton"
+                    android:onClick="solvePuzzle"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="2dp"
+                    app:spinning_bar_width="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:id="@+id/saveSolution"
+                    android:onClick="saveSolution"
+                    />
+            </LinearLayout>
+
+            <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Solve"
-                android:id="@+id/solveButton"
-                android:onClick="solvePuzzle"
-                />
+                android:layout_gravity="center"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
 
-            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-                android:background="@drawable/shape_default"
-                android:textColor="@color/cardview_light_background"
-                app:spinning_bar_color="#FFF"
-                app:spinning_bar_padding="2dp"
-                app:spinning_bar_width="4dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save"
-                android:id="@+id/saveSolution"
-                android:onClick="saveSolution"
-                />
+                >
+
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="1"
+                    android:textSize="25sp"
+                    android:id="@+id/one"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="2"
+                    android:textSize="25sp"
+                    android:id="@+id/two"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="3"
+                    android:layout_marginTop="5dp"
+                    android:textSize="25sp"
+                    android:id="@+id/three"/>
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="4"
+                    android:textSize="25sp"
+                    android:id="@+id/four"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="5"
+                    android:textSize="25sp"
+                    android:id="@+id/five"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="6"
+                    android:layout_marginTop="5dp"
+                    android:textSize="25sp"
+                    android:id="@+id/six"/>
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="7"
+                    android:textSize="25sp"
+                    android:id="@+id/seven"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="8"
+                    android:textSize="25sp"
+                    android:id="@+id/eight"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:text="9"
+                    android:layout_marginTop="5dp"
+                    android:textSize="25sp"
+                    android:id="@+id/nine"/>
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+
+                    android:visibility="invisible"
+                    />
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:layout_marginTop="5dp"
+                    android:text="C"
+                    android:id="@+id/zero"
+                    android:textSize="25sp"
+
+                    />
+
+            </GridLayout>
+
+
+
         </LinearLayout>
-
-    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:columnCount="3"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-
-        >
-
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="1"
-            android:textSize="25sp"
-            android:id="@+id/one"
-            />
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="2"
-            android:textSize="25sp"
-            android:id="@+id/two"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="3"
-            android:textSize="25sp"
-            android:id="@+id/three"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="4"
-            android:textSize="25sp"
-            android:id="@+id/four"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="5"
-            android:textSize="25sp"
-            android:id="@+id/five"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="6"
-            android:textSize="25sp"
-            android:id="@+id/six"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="7"
-            android:textSize="25sp"
-            android:id="@+id/seven"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="8"
-            android:textSize="25sp"
-            android:id="@+id/eight"/>
-
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-            android:text="9"
-            android:textSize="25sp"
-            android:id="@+id/nine"/>
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-
-            android:visibility="invisible"
-            />
-        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:background="@drawable/shape_default"
-            android:textColor="@color/cardview_light_background"
-            app:spinning_bar_color="#FFF"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp"
-
-            android:text="C"
-            android:id="@+id/zero"
-            android:textSize="25sp"
-
-            />
-
-    </GridLayout>
-
-
-
-    </LinearLayout>
     </ScrollView>
 </RelativeLayout>
