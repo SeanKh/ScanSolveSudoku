@@ -27,6 +27,7 @@
         <activity android:name="com.shukhratKhaydarov.sudoku.SudokuImageProcessingActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name="com.shukhratKhaydarov.sudoku.SudokuSolver.SudokuSolverMainActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             />
 

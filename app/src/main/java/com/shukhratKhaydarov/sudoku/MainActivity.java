@@ -70,7 +70,12 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
             }
         } else {
-
+            if(permission.equals(Manifest.permission.CAMERA)){
+                Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri uri  = Uri.parse("file:///sdcard/photo.jpg");
+                photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(photo,CAMERA_REQUEST);
+            }
             //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -217,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
 
+
+
     public void takePicture(View v){
         askForPermission(Manifest.permission.CAMERA,CAMERA_EXST);
 
@@ -249,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterManually(View v){
         Intent intent = new Intent(this, SudokuSolverMainActivity.class);
-
+        intent.putExtra("fromMainActivity", true);
         startActivity(intent);
     }
 

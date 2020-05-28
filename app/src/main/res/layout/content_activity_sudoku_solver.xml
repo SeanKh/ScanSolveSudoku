@@ -56,8 +56,8 @@
                     android:text="Empty Grid"
                     android:id="@+id/easy"
                     android:onClick="emptyGrid"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp" />
 
                 <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                     android:background="@drawable/shape_default"
@@ -70,8 +70,8 @@
                     android:text="Solve"
                     android:id="@+id/solveButton"
                     android:onClick="solvePuzzle"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     />
 
                 <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
@@ -85,8 +85,26 @@
                     android:text="Save"
                     android:id="@+id/saveSolution"
                     android:onClick="saveSolution"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     />
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:background="@drawable/shape_default"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="2dp"
+                    app:spinning_bar_width="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Solve cell"
+                    android:id="@+id/solveNextCell"
+                    android:onClick="solveNextCell"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
             </LinearLayout>
+
 
             <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"

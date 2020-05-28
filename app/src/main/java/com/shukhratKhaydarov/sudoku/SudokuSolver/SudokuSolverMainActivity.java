@@ -33,8 +33,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SudokuSolverMainActivity extends AppCompatActivity implements View.OnClickListener {
     GridView gridview;
@@ -65,9 +68,10 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             } catch (IOException e) {
                 Log.i("Yo", "OH NO");
             }
-        }else{
+        }
+        else if(intent.hasExtra("fromMainActivity") ){
 
-
+            intent.removeExtra("fromMainActivity");
             try {
                 InputStream inputStream = assetManager.open("empty.in");
 
@@ -77,6 +81,7 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             } catch (IOException e) {
                 Log.i("Yo", "OH NO");
             }
+
         }
 
         Button mClickButton1 = (Button)findViewById(R.id.one);
@@ -256,6 +261,41 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
 
     }
 
+    public void solveNextCell(View view){
+        Random random=new Random();
+        int randomNumber=random.nextInt(80);
+        if(validInput(view)) {
+            TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
+            SudokuSolver sudokuSolver = new SudokuSolver();
+            Integer[][] temp = make2d(textAdapter.grid);
+
+            textAdapter.grid2d = temp;
+
+            sudokuSolver.solve(0, 0, textAdapter.grid2d);
+
+            loop(randomNumber, textAdapter);
+
+        }
+    }
+
+    public void loop(int randomNumber,TextAdapter textAdapter){
+        int x = 0;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if(x==randomNumber) {
+                    TextView textView = (TextView) gridview.getChildAt(x);
+                    textView.setText(String.valueOf(textAdapter.grid2d[i][j]));
+
+                    return;
+                }
+                x++;
+            }
+        }
+    }
+
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+
+
     public void saveSolution(View view){
         TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
         List<Integer> list=new ArrayList<>();
@@ -266,7 +306,8 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         }
         Board b = Board.of(9, Joiner.on(" ").join(list));
 
-        String FILENAME = "resultAfterSolving.txt";
+        Timestamp timestamp=new Timestamp(System.currentTimeMillis());
+        String FILENAME = "resultAfterSolving"+sdf.format(timestamp)+".txt";
         save(b.toString(),FILENAME);
 
     }

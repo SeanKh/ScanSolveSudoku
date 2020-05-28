@@ -60,6 +60,21 @@
                     android:onClick="emptyGrid"
                     android:layout_marginBottom="10dp"
                     />
+                <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                    android:id="@+id/solveNextCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_default"
+                    android:onClick="solveNextCell"
+                    android:text="Solve cell"
+                    android:textColor="@color/cardview_light_background"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="2dp"
+                    app:spinning_bar_width="4dp"
+                    android:padding="4dp"
+                    android:layout_marginBottom="10dp"
+
+                    />
 
                 <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                     android:background="@drawable/shape_default"
@@ -87,7 +102,9 @@
                     android:text="Save"
                     android:id="@+id/saveSolution"
                     android:onClick="saveSolution"
+
                     />
+
             </LinearLayout
                 >
 
