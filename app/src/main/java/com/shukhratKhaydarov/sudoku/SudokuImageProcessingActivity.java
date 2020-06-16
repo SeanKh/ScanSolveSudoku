@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,12 +19,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.shukhratKhaydarov.sudoku.SudokuSolver.SudokuSolverMainActivity;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -37,13 +34,9 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -51,12 +44,11 @@ import java.util.Objects;
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
 import static com.shukhratKhaydarov.sudoku.FeatureDetector.CONTAIN_DIGIT_SUB_MATRIX_DENSITY;
+import static org.opencv.core.Core.bitwise_not;
 import static org.opencv.imgproc.Imgproc.CHAIN_APPROX_SIMPLE;
 import static org.opencv.imgproc.Imgproc.RETR_TREE;
-import static org.opencv.imgproc.Imgproc.adaptiveThreshold;
 import static org.opencv.imgproc.Imgproc.approxPolyDP;
 import static org.opencv.imgproc.Imgproc.contourArea;
-import static org.opencv.imgproc.Imgproc.findContours;
 import static org.opencv.imgproc.Imgproc.getPerspectiveTransform;
 import static org.opencv.imgproc.Imgproc.warpPerspective;
 
@@ -66,8 +58,37 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
     Uri imageUri;
     ImageView myImage;
 
-    CircularProgressButton circularProgressButton;
+    public Mat preprocess(Mat colorimg, boolean firstWay) {
 
+        if(firstWay==true) {
+            Mat bw = new Mat();
+
+            Imgproc.cvtColor(colorimg, bw, Imgproc.COLOR_RGB2GRAY);
+            Imgproc.GaussianBlur(bw, bw, new Size(11, 11), 0);
+
+            Imgproc.adaptiveThreshold(bw, bw, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2);
+            return bw;
+        }
+        else{
+            Mat sudoku = new Mat();
+            Mat outerBox=new Mat();
+            Imgproc.cvtColor(colorimg, sudoku, Imgproc.COLOR_RGB2GRAY);
+            //Imgproc.GaussianBlur(sudoku, sudoku, new Size(11, 11), 0);
+            Imgproc.GaussianBlur(sudoku, sudoku, new Size(5, 5), 0);
+
+            Imgproc.adaptiveThreshold(sudoku, outerBox, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 5, 2);
+            bitwise_not(outerBox, outerBox);
+
+            byte [] data = {0,1,0,1,1,1,0,1,0};
+            Mat ukernel = new Mat(3,3, CvType.CV_8U);
+            ukernel.put(0,0,data);
+            Imgproc.dilateVar(outerBox, outerBox, ukernel);
+
+            return outerBox;
+        }
+    }
+
+    CircularProgressButton circularProgressButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +103,7 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
                 AsyncTask<String,String,String> scanImage=new AsyncTask<String,String,String>() {
                     @Override
                     protected String doInBackground(String... voids) {
-                        doImageProcessing();
+                        forwardToFurtherIP();
                         return "done";
                     }
 
@@ -100,29 +121,40 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
             }
         });
 
+
         myImage = findViewById(R.id.img);
-        // Get the Intent that started this activity and extract the string
+
         Intent intent = getIntent();
         if (intent.hasExtra("image-uri")) {
             imageUri = Uri.parse(intent.getStringExtra("image-uri"));
-            /*File file=new File(Environment.getExternalStorageDirectory().getPath(), "photo.jpg");
-            boolean e=file.exists();
-            Uri uri = Uri.fromFile(file);*/
             myImage.setImageURI(imageUri);
         }
         else{
             Bitmap color=(Bitmap) getIntent().getExtras().get("photo");
-            /*byte[] byteArray = getIntent().getByteArrayExtra("photo");
-            Bitmap bmp32 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            colorimg=new Mat();
-            Utils.bitmapToMat(bmp32, colorimg);*/
             myImage.setImageBitmap(color);
         }
-
-        //String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-
         OpenCVLoader.initDebug();
     }
+
+
+
+    public void forwardToFurtherIP(){
+        colorimg = new Mat();
+
+        BitmapDrawable drawable = (BitmapDrawable) myImage.getDrawable();
+        Bitmap bitmap = drawable.getBitmap();
+
+        Utils.bitmapToMat(bitmap, colorimg);
+
+        extractDigits(colorimg,true);
+
+        extractDigits(colorimg,false);
+
+
+        Intent intent = new Intent(this, SudokuFurtherImageProcessingActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -130,11 +162,10 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -148,85 +179,37 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void doImageProcessing() {
 
-        if(colorimg==null) {
-            colorimg = new Mat();
+    private List<Mat> getCells(Mat m) {
+        int size = m.height() / 9;
 
-            BitmapDrawable drawable = (BitmapDrawable) myImage.getDrawable();
-            Bitmap bitmap = drawable.getBitmap();
+        Size cellSize = new Size(size, size);
+        List<Mat> cells = Lists.newArrayList();
 
-            Utils.bitmapToMat(bitmap, colorimg);
-        }
-        /*Mat bw = getSudokuArea(colorimg);
-
-        Bitmap img_bitmap = Bitmap.createBitmap(bw.cols(), bw.rows(),Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(bw, img_bitmap);
-        ImageView imageView = findViewById(R.id.img);
-        imageView.setImageBitmap(img_bitmap);*/
-        List<Integer> res=extractDigits(colorimg);
-        Board b = Board.of(9, Joiner.on(" ").join(res));
-
-        String FILENAME = "result.txt";
-
-        String fullPath=save(b.toString(),FILENAME);
-        //Toast.makeText(this,b.toString(),Toast.LENGTH_LONG);
-
-        Intent intent = new Intent(SudokuImageProcessingActivity.this, SudokuSolverMainActivity.class);
-        intent.putExtra("image-path", fullPath);
-        startActivity(intent);
-
-    }
-
-
-
-
-    public String save(String text,String FILE_NAME) {
-
-        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        try
-        {
-            File dir = new File(fullPath);
-
-            if (!dir.getParentFile().exists()) {
-                dir.getParentFile().mkdirs();
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                Rect rect = new Rect(new Point(col * size, row * size), cellSize);
+                try {
+                    Mat digit = new Mat(m, rect).clone();
+                    cells.add(digit);
+                }
+                catch (Exception e){
+                    Log.d("E","e");
+                }
             }
-
-            OutputStream fOut = null;
-            File file = new File(fullPath, FILE_NAME);
-            if(file.getParentFile().exists())
-                file.getParentFile().delete();
-            file.getParentFile().createNewFile();
-            fOut = new FileOutputStream(file);
-            fOut.write(text.getBytes());
-            // 100 means no compression, the lower you go, the stronger the compression
-
-            fOut.flush();
-            fOut.close();
-            fullPath+="/"+FILE_NAME;
-            Toast.makeText(this, "Saved to " + fullPath,
-                    Toast.LENGTH_LONG).show();
         }
-        catch (Exception e)
-        {
-            Log.e("saveToExternalStorage()", e.getMessage());
-        }
-        return fullPath;
+
+        return cells;
     }
 
-    public Mat preprocess(Mat colorimg) {
+    public void extractDigits(Mat m,boolean way) {
+        Mat sudoku = getSudokuArea(m,way);
 
-        Mat bw = new Mat();
+        if (sudoku == null) {
+            return;
+        }
 
-        Imgproc.cvtColor(colorimg, bw, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.GaussianBlur(bw, bw, new Size(11, 11), 0);
-
-        adaptiveThreshold(bw, bw, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2);
-        //bitwise_not(bw, bw);
-        //Mat element = Imgproc.getStructuringElement(elementType, new Size(2 * kernelSize + 1, 2 * kernelSize + 1),
-                //new Point(kernelSize, kernelSize));
-        //dilate(bw, bw, element);
-        return bw;
+        extractCells(sudoku,way);
     }
     private Size FOUR_CORNERS = new Size(1, 4);
 
@@ -258,6 +241,25 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return dst;
     }
 
+    public Mat getSudokuArea(Mat image,boolean way) {
+        Mat preprocessed = preprocess(image,way);
+        MatOfPoint poly = findBiggerPolygon(preprocessed);
+        MatOfPoint2f aproxPoly = aproxPolygon(poly);
+
+        if (Objects.equals(aproxPoly.size(), FOUR_CORNERS)) {
+            int size = distance(aproxPoly);
+
+            Mat cutted = applyMask(image, poly);
+
+            Mat wrapped = wrapPerspective(size, orderPoints(aproxPoly), cutted);
+            Mat preprocessed2 = preprocess(wrapped,way);
+            Mat withOutLines = cleanLines(preprocessed2);
+
+            return withOutLines;
+        }
+
+        return preprocessed;
+    }
     private Mat wrapPerspective(int size, MatOfPoint2f src, Mat image) {
         Size reshape = new Size(size, size);
 
@@ -271,6 +273,7 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
 
         return undistorted;
     }
+
 
     private static final Ordering<Point> SORT = Ordering.natural().nullsFirst().onResultOf(
             new Function<Point, Integer>() {
@@ -293,12 +296,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return s;
     }
 
-    private Mat preprocess2(Mat image) {
-        Mat bw = preprocess(image);
-//        erode(bw, bw, crossKernel);
-
-        return bw;
-    }
 
     private Mat cleanLines(Mat image) {
         Mat m = image.clone();
@@ -324,117 +321,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         }
         return m;
     }
-    public List<Integer> extractDigits(Mat m) {
-        Mat sudoku = getSudokuArea(m);
-
-        if (sudoku == null) {
-            return null;
-        }
-
-        return extractCells(sudoku);
-    }
-    private List<Mat> getCells(Mat m) {
-        int size = m.height() / 9;
-
-        Size cellSize = new Size(size, size);
-        List<Mat> cells = Lists.newArrayList();
-
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                Rect rect = new Rect(new Point(col * size, row * size), cellSize);
-                try {
-                    Mat digit = new Mat(m, rect).clone();
-                    cells.add(digit);
-                }catch (Exception e){
-                    Log.d("E","e");
-                }
-
-
-                /*try {
-                    Mat digit = new Mat(m, rect).clone();
-                    cells.add(digit);
-                }
-                catch (CvException e){
-
-                    rect = new Rect(new Point(col * 84, row * 84), new Size(84, 84));
-                    Mat digit = new Mat(m, rect).clone();
-                    cells.add(digit);
-                    Log.d("E","e");
-                }*/
-            }
-        }
-
-        return cells;
-    }
-
-
-    private List<Integer> extractCells(Mat m) {
-        DetectDigit detect = null;
-        try {
-            Mat img = Utils.loadResource(this, R.drawable.digits, Imgcodecs.CV_LOAD_IMAGE_COLOR);
-            detect = new DetectDigit(img);
-            //detect = new DetectDigit(Utils.loadResource(getApplicationContext(),R.drawable.digits));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<Mat> cells = getCells(m);
-        List<Optional<Rect>> digitBoxes = Lists.transform(cells, FeatureDetector.GET_DIGIT_BOX_BYTE_SUM);
-
-        List<Integer> result = Lists.newArrayList();
-        List<Mat> cuts = Lists.newArrayList();
-        /* zip... zip! :'( */
-
-        for(int i = 0; i < cells.size(); i++ ) {
-            Mat cell = cells.get(i);
-            com.google.common.base.Optional<Rect> box = digitBoxes.get(i);
-
-            int d = 0;
-
-            if (box.isPresent() && CONTAIN_DIGIT_SUB_MATRIX_DENSITY.apply(cell)) {
-                /* cut current cell to the finded box */
-                Mat cutted = new Mat(cell, box.get()).clone();
-                Imgproc.rectangle(cell, box.get().tl(), box.get().br(), Scalar.all(255));
-                cuts.add(cutted);
-                d = detect.detect(cutted);
-            }
-
-            Imgproc.rectangle(cell, new Point(0,0), new Point(100,100), Scalar.all(255));
-
-            result.add(d);
-
-        }
-
-
-        Mat m2 = new Mat(0, cells.get(0).cols(), CvType.CV_8SC1);
-
-        for(Mat digit: cells) {
-            m2.push_back(digit.clone());
-        }
-
-        //Imgcodecs.imwrite("cells_boxed.jpg", m2);
-
-        return result;
-    }
-
-    public Mat getSudokuArea(Mat image) {
-        Mat preprocessed = preprocess(image);
-        MatOfPoint poly = findBiggerPolygon(preprocessed);
-        MatOfPoint2f aproxPoly = aproxPolygon(poly);
-//
-        if (Objects.equals(aproxPoly.size(), FOUR_CORNERS)) {
-            int size = distance(aproxPoly);
-
-            Mat cutted = applyMask(image, poly);
-
-            Mat wrapped = wrapPerspective(size, orderPoints(aproxPoly), cutted);
-            Mat preprocessed2 = preprocess2(wrapped);
-            Mat withOutLines = cleanLines(preprocessed2);
-
-            return withOutLines;
-        }
-
-        return preprocessed;
-    }
     public static final Function<MatOfPoint, Integer> AREA = new Function<MatOfPoint, Integer>() {
         @Override
         public Integer apply(MatOfPoint input) {
@@ -442,13 +328,13 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         }
     };
 
-        public static final Ordering<MatOfPoint> ORDERING_BY_AREA = Ordering.natural().onResultOf(AREA);
+    public static final Ordering<MatOfPoint> ORDERING_BY_AREA = Ordering.natural().onResultOf(AREA);
 
     private MatOfPoint findBiggerPolygon(Mat image) {
         List<MatOfPoint> contours = Lists.newArrayList();
         Mat hierarchy = new Mat();
 
-        findContours(image.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(image.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
         if (contours.isEmpty()) {
             return new MatOfPoint();
@@ -459,4 +345,169 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return max;
     }
 
+    static List<Integer>  indexesAvailableValues1binInvTrue,indexesAvailableValues1binInvFalse,
+            indexesAvailableValues2binInvTrue,indexesAvailableValues2binInvFalse,
+            indexesOnlyAvailableValues1binInvTrue,indexesOnlyAvailableValues1binInvFalse,
+            indexesOnlyAvailableValues2binInvTrue,indexesOnlyAvailableValues2binInvFalse;
+
+
+
+    static List<Mat> resultWithEmptyCells1BinInvTrue,resultWithEmptyCells1binInvFalse,
+                    resultWithEmptyCells2BinInvTrue,resultWithEmptyCells2binInvFalse ;
+
+    static List<Mat> publicCells;
+
+    private void extractCells(Mat m,boolean way) {
+
+        List<Mat> cells = getCells(m);
+        List<Optional<Rect>> digitBoxes = Lists.transform(cells, FeatureDetector.GET_DIGIT_BOX_BYTE_SUM);
+
+
+        if(way==true) {
+            resultWithEmptyCells1BinInvTrue = Lists.newArrayList();
+            indexesAvailableValues1binInvTrue= Lists.newArrayList();
+            indexesAvailableValues1binInvFalse= Lists.newArrayList();
+
+            resultWithEmptyCells1binInvFalse= Lists.newArrayList();
+            indexesOnlyAvailableValues1binInvTrue= Lists.newArrayList();
+            indexesOnlyAvailableValues1binInvFalse= Lists.newArrayList();
+        }
+        else {
+            resultWithEmptyCells2BinInvTrue = Lists.newArrayList();
+            indexesAvailableValues2binInvTrue= Lists.newArrayList();
+            indexesAvailableValues2binInvFalse= Lists.newArrayList();
+
+            resultWithEmptyCells2binInvFalse= Lists.newArrayList();
+            indexesOnlyAvailableValues2binInvTrue= Lists.newArrayList();
+            indexesOnlyAvailableValues2binInvFalse= Lists.newArrayList();
+        }
+        for(int i = 0; i < cells.size(); i++ ) {
+            Mat cell = cells.get(i).clone();
+            com.google.common.base.Optional<Rect> box = digitBoxes.get(i);
+
+
+
+            if (box.isPresent() && CONTAIN_DIGIT_SUB_MATRIX_DENSITY.apply(cell)) {
+                bitwise_not(cell,cell);
+
+                //result.add(cell);
+                if(way==true){
+                    Mat cellCopy=cell.clone();
+                    resultWithEmptyCells1binInvFalse.add(findImageCenter(cellCopy,false));
+                    indexesAvailableValues1binInvFalse.add(i);
+                    indexesOnlyAvailableValues1binInvFalse.add(i);
+
+                    resultWithEmptyCells1BinInvTrue.add(findImageCenter(cell.clone(),true));
+                    //resultWithEmptyCells1BinInvTrue.add(cell);
+                    indexesAvailableValues1binInvTrue.add(i);
+                    indexesOnlyAvailableValues1binInvTrue.add(i);
+
+
+
+
+                }
+                else{
+                    Mat cellCopy=cell.clone();
+                    resultWithEmptyCells2BinInvTrue.add(findImageCenter(cell.clone(),true));
+                    indexesAvailableValues2binInvTrue.add(i);
+                    indexesOnlyAvailableValues2binInvTrue.add(i);
+
+                    resultWithEmptyCells2binInvFalse.add(findImageCenter(cellCopy,false));
+                    indexesAvailableValues2binInvFalse.add(i);
+                    indexesOnlyAvailableValues2binInvFalse.add(i);
+                }
+
+            }
+            else {
+                if (way == true) {
+                    resultWithEmptyCells1BinInvTrue.add(new Mat());
+                    indexesAvailableValues1binInvTrue.add(-100);
+
+                    resultWithEmptyCells1binInvFalse.add(new Mat());
+                    indexesAvailableValues1binInvFalse.add(-100);
+
+
+                } else {
+                    resultWithEmptyCells2BinInvTrue.add(new Mat());
+                    indexesAvailableValues2binInvTrue.add(-100);
+
+                    resultWithEmptyCells2binInvFalse.add(new Mat());
+                    indexesAvailableValues2binInvFalse.add(-100);
+
+                }
+            }
+        }
+        //return result;
+    }
+
+
+    private Mat findImageCenter(Mat image2, boolean binInvTrue){
+        // reading image
+        Mat image = image2;
+        // clone the image
+        Mat original = image.clone();
+        if(binInvTrue==true) {
+            // thresholding the image to make a binary image
+            Imgproc.threshold(image, image, 10, 128, Imgproc.THRESH_BINARY_INV);
+        }
+        else{
+            Imgproc.threshold(image, image, 10, 128, Imgproc.THRESH_BINARY);
+        }
+        // find the center of the image
+        double[] centers = {(double)image.width()/2, (double)image.height()/2};
+        Point image_center = new Point(centers);
+
+        // finding the contours
+        ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(image, contours, hierarchy, Imgproc.RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        // finding best bounding rectangle for a contour whose distance is closer to the image center that other ones
+        double d_min = Double.MAX_VALUE;
+        Rect rect_min = new Rect();
+        for (MatOfPoint contour : contours) {
+            Rect rec = Imgproc.boundingRect(contour);
+            // find the best candidates
+            if (rec.height > image.height()/2 & rec.width > image.width()/2)
+                continue;
+            Point pt1 = new Point((double)rec.x, (double)rec.y);
+            Point center = new Point(rec.x+(double)(rec.width)/2, rec.y + (double)(rec.height)/2);
+            double d = Math.sqrt(Math.pow((double)(pt1.x-image_center.x),2) + Math.pow((double)(pt1.y -image_center.y), 2));
+            if (d < d_min)
+            {
+                d_min = d;
+                rect_min = rec;
+            }
+        }
+        Mat result=new Mat();
+        // slicing the image for result region
+        int pad = 1;
+        rect_min.x = rect_min.x - pad;
+        rect_min.y = rect_min.y - pad;
+
+        rect_min.width = rect_min.width + 2 * pad;
+        rect_min.height = rect_min.height + 2 * pad;
+        int moreW=rect_min.x+rect_min.width;
+        int moreL=rect_min.height+rect_min.y;
+        if(moreW>original.width() || moreL>original.height() || rect_min.x==-pad || rect_min.y==-pad) {
+            rect_min = new Rect(new Point((original.width()/2)-original.width()/3, (original.height()/2)-original.height()/3), new Size(original.width()/2+original.width()/4,original.height()/2+original.height()/4));
+
+        }
+
+
+        try {
+            result = original.submat(rect_min);
+        }catch (Exception e){
+            Bitmap img_bitmap = Bitmap.createBitmap(image.cols(), image.rows(),Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(image, img_bitmap);
+
+            ImageView imageView = findViewById(R.id.img);
+            imageView.setImageBitmap(img_bitmap);
+        }
+        //result=original;
+        return result;
+    }
 }
+
+
+

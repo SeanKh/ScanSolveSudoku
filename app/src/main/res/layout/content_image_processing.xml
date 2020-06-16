@@ -22,6 +22,7 @@
         android:layout_centerInParent="true"
         android:layout_alignParentBottom="true"
         android:text="Scan Sudoku"
+
         android:textColor="@color/cardview_light_background"
         app:spinning_bar_color="#FFF"
         app:spinning_bar_padding="6dp"

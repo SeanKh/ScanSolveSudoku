@@ -3,9 +3,6 @@
 //
 package org.opencv.imgproc;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
@@ -18,9 +15,10 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
-import org.opencv.imgproc.CLAHE;
-import org.opencv.imgproc.LineSegmentDetector;
 import org.opencv.utils.Converters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // C++: class Imgproc
 //javadoc: Imgproc
@@ -2264,11 +2262,11 @@ public class Imgproc {
 
 
     //
-    // C++:  void cv::dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    // C++:  void cv::dilateVar(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
     //
 
-    //javadoc: dilate(src, dst, kernel, anchor, iterations, borderType, borderValue)
-    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
+    //javadoc: dilateVar(src, dst, kernel, anchor, iterations, borderType, borderValue)
+    public static void dilateVar(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
     {
         
         dilate_0(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
@@ -2276,8 +2274,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: dilate(src, dst, kernel, anchor, iterations, borderType)
-    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType)
+    //javadoc: dilateVar(src, dst, kernel, anchor, iterations, borderType)
+    public static void dilateVar(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType)
     {
         
         dilate_1(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType);
@@ -2285,8 +2283,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: dilate(src, dst, kernel, anchor, iterations)
-    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
+    //javadoc: dilateVar(src, dst, kernel, anchor, iterations)
+    public static void dilateVar(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
     {
         
         dilate_2(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations);
@@ -2294,8 +2292,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: dilate(src, dst, kernel, anchor)
-    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor)
+    //javadoc: dilateVar(src, dst, kernel, anchor)
+    public static void dilateVar(Mat src, Mat dst, Mat kernel, Point anchor)
     {
         
         dilate_3(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y);
@@ -2303,8 +2301,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: dilate(src, dst, kernel)
-    public static void dilate(Mat src, Mat dst, Mat kernel)
+    //javadoc: dilateVar(src, dst, kernel)
+    public static void dilateVar(Mat src, Mat dst, Mat kernel)
     {
         
         dilate_4(src.nativeObj, dst.nativeObj, kernel.nativeObj);
@@ -2576,11 +2574,11 @@ public class Imgproc {
 
 
     //
-    // C++:  void cv::erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    // C++:  void cv::erodeVar(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
     //
 
-    //javadoc: erode(src, dst, kernel, anchor, iterations, borderType, borderValue)
-    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
+    //javadoc: erodeVar(src, dst, kernel, anchor, iterations, borderType, borderValue)
+    public static void erodeVar(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
     {
         
         erode_0(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
@@ -2588,8 +2586,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: erode(src, dst, kernel, anchor, iterations, borderType)
-    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType)
+    //javadoc: erodeVar(src, dst, kernel, anchor, iterations, borderType)
+    public static void erodeVar(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType)
     {
         
         erode_1(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType);
@@ -2597,8 +2595,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: erode(src, dst, kernel, anchor, iterations)
-    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
+    //javadoc: erodeVar(src, dst, kernel, anchor, iterations)
+    public static void erodeVar(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
     {
         
         erode_2(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations);
@@ -2606,8 +2604,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: erode(src, dst, kernel, anchor)
-    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor)
+    //javadoc: erodeVar(src, dst, kernel, anchor)
+    public static void erodeVar(Mat src, Mat dst, Mat kernel, Point anchor)
     {
         
         erode_3(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y);
@@ -2615,8 +2613,8 @@ public class Imgproc {
         return;
     }
 
-    //javadoc: erode(src, dst, kernel)
-    public static void erode(Mat src, Mat dst, Mat kernel)
+    //javadoc: erodeVar(src, dst, kernel)
+    public static void erodeVar(Mat src, Mat dst, Mat kernel)
     {
         
         erode_4(src.nativeObj, dst.nativeObj, kernel.nativeObj);
@@ -4162,7 +4160,7 @@ public static Size getTextSize(String text, int fontFace, double fontScale, int 
     private static native void demosaicing_0(long _src_nativeObj, long _dst_nativeObj, int code, int dcn);
     private static native void demosaicing_1(long _src_nativeObj, long _dst_nativeObj, int code);
 
-    // C++:  void cv::dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    // C++:  void cv::dilateVar(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
     private static native void dilate_0(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
     private static native void dilate_1(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType);
     private static native void dilate_2(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
@@ -4209,7 +4207,7 @@ public static Size getTextSize(String text, int fontFace, double fontScale, int 
     // C++:  void cv::equalizeHist(Mat src, Mat& dst)
     private static native void equalizeHist_0(long src_nativeObj, long dst_nativeObj);
 
-    // C++:  void cv::erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    // C++:  void cv::erodeVar(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
     private static native void erode_0(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
     private static native void erode_1(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType);
     private static native void erode_2(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);

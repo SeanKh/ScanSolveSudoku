@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".SudokuFurtherEditingImageProcessingActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="73dp"
+        android:gravity="center"
+
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/topSection"
+            >
+            <FrameLayout
+                android:id="@+id/frameLayoutIdentifyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                >
+            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+
+                android:gravity="center"
+
+
+                android:id="@+id/identifyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_default"
+                android:padding="10dp"
+                android:text="Identify the number"
+
+                android:textColor="@color/cardview_light_background"
+                app:spinning_bar_color="#FFF"
+                app:spinning_bar_padding="6dp"
+                app:spinning_bar_width="4dp"
+
+                />
+            </FrameLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:id="@+id/infoPrediction"
+                >
+        <TextView
+            android:id="@+id/textIdentified"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Is on image ____?"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:textSize="20dp"
+            />
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+
+            android:id="@+id/yesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default"
+            android:padding="10dp"
+            android:text="Yes"
+            android:layout_toRightOf="@id/textIdentified"
+            android:textColor="@color/cardview_light_background"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
+
+            android:layout_toEndOf="@id/textIdentified" />
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+
+            android:id="@+id/noButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_default"
+            android:padding="10dp"
+            android:text="No"
+            android:layout_toRightOf="@+id/yesButton"
+            android:textColor="@color/cardview_light_background"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
+
+            android:layout_toEndOf="@+id/yesButton" />
+        </RelativeLayout>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+
+            android:id="@+id/first"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/topSection"
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+android:layout_centerHorizontal="true"
+                android:id="@+id/img1"
+
+                />
+            <LinearLayout
+                android:layout_below="@id/img1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                >
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_margin="20dp"
+                    >
+                    <TextView
+
+                        android:textColor="@color/black"
+                        android:text="Zoom: 0"
+                        android:id="@+id/textviewZoom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        />
+
+
+                    <Button
+                        android:layout_toRightOf="@id/textviewZoom"
+                        android:id="@+id/plusZoomButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/plusZoomButton"
+                        android:id="@+id/minusZoomButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+
+                    >
+                    <TextView
+
+                        android:textColor="@color/black"
+                        android:text="Threshold: 0"
+                        android:id="@+id/textviewThres"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:gravity="center"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/textviewThres"
+                        android:id="@+id/plusThresButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/plusThresButton"
+                        android:id="@+id/minusThresButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+
+                    >
+                    <TextView
+
+                        android:textColor="@color/black"
+                        android:text="Erode: 1x1"
+                        android:id="@+id/textviewErode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:gravity="center"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/textviewErode"
+                        android:id="@+id/plusErodeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/plusErodeButton"
+                        android:id="@+id/minusErodeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+
+                    >
+                    <TextView
+
+                        android:textColor="@color/black"
+                        android:text="Dilate: 1x1"
+                        android:id="@+id/textviewDilate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:gravity="center"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/textviewDilate"
+                        android:id="@+id/plusDilateButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        />
+                    <Button
+                        android:layout_toRightOf="@id/plusDilateButton"
+                        android:id="@+id/minusDilateButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        />
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

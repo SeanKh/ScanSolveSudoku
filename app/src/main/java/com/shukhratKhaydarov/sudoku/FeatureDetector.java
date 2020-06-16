@@ -16,9 +16,6 @@ public class FeatureDetector {
     public interface DigitBoxDetector extends Function<Mat, Optional<Rect>> {}
     public interface HasDigit extends Predicate<Mat> {}
 
-    public void test(Mat mat){
-
-    }
     public static final HasDigit CONTAIN_DIGIT_SUB_MATRIX_DENSITY = new HasDigit() {
         @Override
         public boolean apply(Mat input) {
