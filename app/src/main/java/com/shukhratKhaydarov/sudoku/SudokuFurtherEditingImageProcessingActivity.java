@@ -485,11 +485,11 @@ public class SudokuFurtherEditingImageProcessingActivity extends AppCompatActivi
                         if (zoomLevelVar > 0)
                             res = findImageCenter(res, zoomLevelVar);
                         try {
-                            Bitmap img_bitmap = Bitmap.createBitmap(res.cols(), res.rows(), Bitmap.Config.ARGB_8888);
+                            /*Bitmap img_bitmap = Bitmap.createBitmap(res.cols(), res.rows(), Bitmap.Config.ARGB_8888);
                             Utils.matToBitmap(res, img_bitmap);
                             ImageView imageView = findViewById(R.id.img1);
                             imageView.setImageBitmap(img_bitmap);
-
+*/
                             identifiedNumber = onClassify(res);
                             System.out.println("Identified: "+identifiedNumber);
                             //break;
@@ -653,6 +653,8 @@ public class SudokuFurtherEditingImageProcessingActivity extends AppCompatActivi
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        for (int i = 0; i < menu.size(); i++)
+            menu.getItem(i).setVisible(true);
         return true;
     }
 
@@ -670,7 +672,12 @@ public class SudokuFurtherEditingImageProcessingActivity extends AppCompatActivi
             startActivity(intent);
             return true;
         }
+        if (id == R.id.hint) {
+            Intent intent = new Intent(SudokuFurtherEditingImageProcessingActivity.this, Pop.class);
 
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -1,6 +1,17 @@
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Scan&amp;Solve Sudoku</string>
 
     <string name="dialog_ok">OK</string>
     <string name="action_home">Main window</string>
+
+    <string name="hintText">
+        For accurate number identification,\n
+        image shall have:\n\n
+        \u25BA number: black\n
+
+        \u25BA background: white\n\n
+        As in example below:
+    </string>
+
 </resources>

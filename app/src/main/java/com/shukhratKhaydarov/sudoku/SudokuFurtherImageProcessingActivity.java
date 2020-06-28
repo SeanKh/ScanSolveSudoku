@@ -83,6 +83,9 @@ public class SudokuFurtherImageProcessingActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        for (int i = 0; i < menu.size(); i++)
+            menu.getItem(i).setVisible(true);
+
         return true;
     }
 
@@ -92,6 +95,13 @@ public class SudokuFurtherImageProcessingActivity extends AppCompatActivity {
 
         if (id == R.id.action_home) {
             Intent intent = new Intent(SudokuFurtherImageProcessingActivity.this, MainActivity.class);
+
+            startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.hint) {
+            Intent intent = new Intent(SudokuFurtherImageProcessingActivity.this, Pop.class);
 
             startActivity(intent);
             return true;
