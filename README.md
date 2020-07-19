@@ -7,9 +7,9 @@ Logic puzzles help people to sharpen their mental ability skills such as numeric
 
 The code is divided into 3 major parts(Image Processing, ML, Backtracking algorithms):
 
-java files for Image Processing using OpenCV library
-files for the Classification work done
-files for the Backtracking algorithm implementations.
+-java files for Image Processing using OpenCV library
+-files for the Classification work done(models are in assets/*, usage is in */SudokuSolver/*)
+-files for the Backtracking algorithm implementations.
 
 apart from the general structure, the code is throughly documented.
 
