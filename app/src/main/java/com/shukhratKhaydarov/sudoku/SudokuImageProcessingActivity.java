@@ -57,15 +57,27 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
     Mat colorimg=null;
     Uri imageUri;
     ImageView myImage;
+    CircularProgressButton circularProgressButton;
+    private Size FOUR_CORNERS = new Size(1, 4);
+    static List<Integer>  indexesAvailableValues1binInvTrue,indexesAvailableValues1binInvFalse,
+            indexesAvailableValues2binInvTrue,indexesAvailableValues2binInvFalse,
+            indexesOnlyAvailableValues1binInvTrue,indexesOnlyAvailableValues1binInvFalse,
+            indexesOnlyAvailableValues2binInvTrue,indexesOnlyAvailableValues2binInvFalse;
 
+    static List<Mat> resultWithEmptyCells1BinInvTrue,resultWithEmptyCells1binInvFalse,
+            resultWithEmptyCells2BinInvTrue,resultWithEmptyCells2binInvFalse ;
+
+    /**
+     * Preprocesses the color image
+     * @param  colorimg  color image
+     * @param  firstWay  first time preprocessing
+     * @return      the preprocessed image
+     */
     public Mat preprocess(Mat colorimg, boolean firstWay) {
-
         if(firstWay==true) {
             Mat bw = new Mat();
-
             Imgproc.cvtColor(colorimg, bw, Imgproc.COLOR_RGB2GRAY);
             Imgproc.GaussianBlur(bw, bw, new Size(11, 11), 0);
-
             Imgproc.adaptiveThreshold(bw, bw, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 2);
             return bw;
         }
@@ -88,7 +100,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         }
     }
 
-    CircularProgressButton circularProgressButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,8 +131,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
                 scanImage.execute();
             }
         });
-
-
         myImage = findViewById(R.id.img);
 
         Intent intent = getIntent();
@@ -160,12 +169,8 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -181,29 +186,34 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    private List<Mat> getCells(Mat m) {
-        int size = m.height() / 9;
-
+    /**
+     * Gets cells from the image matrix
+     * @param  image   matrix of the image
+     * @return      the list of extracted cells
+     */
+    private List<Mat> getCells(Mat image) {
+        int size = image.height() / 9;
         Size cellSize = new Size(size, size);
         List<Mat> cells = Lists.newArrayList();
-
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 Rect rect = new Rect(new Point(col * size, row * size), cellSize);
                 try {
-                    Mat digit = new Mat(m, rect).clone();
+                    Mat digit = new Mat(image, rect).clone();
                     cells.add(digit);
-                }
-                catch (Exception e){
+                }catch (Exception e){
                     Log.d("E","e");
                 }
             }
         }
-
         return cells;
     }
 
+    /**
+     * Extracts digits from the image matrix
+     * @param  m   matrix of the image
+     * @return      the list of extracted digits
+     */
     public void extractDigits(Mat m,boolean way) {
         Mat sudoku = getSudokuArea(m,way);
 
@@ -213,10 +223,13 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
 
         extractCells(sudoku,way);
     }
-    private Size FOUR_CORNERS = new Size(1, 4);
 
+    /**
+     * Approximates a polygonal curves with the specified precision
+     * @param  poly   matrix points for the image
+     * @return      the approximated polygonal curve matrix of image
+     */
     private MatOfPoint2f aproxPolygon(MatOfPoint poly) {
-
         MatOfPoint2f dst = new MatOfPoint2f();
         MatOfPoint2f src = new MatOfPoint2f();
         poly.convertTo(src, CvType.CV_32FC2);
@@ -226,11 +239,23 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return dst;
     }
 
+    /**
+     * Finds distance of points from supplied matrix points
+     * @param  poly   matrix points for the image
+     * @return      the distance of points
+     */
     private int distance(MatOfPoint2f poly) {
         Point[] a =  poly.toArray();
         return (int)Math.sqrt((a[0].x - a[1].x)*(a[0].x - a[1].x) +
                 (a[0].y - a[1].y)*(a[0].y - a[1].y));
     }
+
+    /**
+     * Applies mask on image matrix
+     * @param  image   matrix of the image
+     * @param  poly   matrix points for the image
+     * @return      the masked matrix of image
+     */
     private Mat applyMask(Mat image, MatOfPoint poly) {
         Mat mask = Mat.zeros(image.size(), CvType.CV_8UC1);
 
@@ -243,6 +268,12 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return dst;
     }
 
+    /**
+     * Extracts sudoku area from image
+     * @param  image   matrix of the image
+     * @param  way  first time preprocessing
+     * @return      the sudoku area extracted from image
+     */
     public Mat getSudokuArea(Mat image,boolean way) {
         Mat preprocessed = preprocess(image,way);
         MatOfPoint poly = findBiggerPolygon(preprocessed);
@@ -262,6 +293,14 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
 
         return preprocessed;
     }
+
+    /**
+     * Applies a perspective transformation to an image
+     * @param  image   matrix of the image
+     * @param  size   size for reshaping
+     * @param  src   source image
+     * @return      the masked matrix of image
+     */
     private Mat wrapPerspective(int size, MatOfPoint2f src, Mat image) {
         Size reshape = new Size(size, size);
 
@@ -285,6 +324,11 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
             }
     );
 
+    /**
+     * Sorts the point in image matrix
+     * @param  mat   matrix of the image points
+     * @return      the sorted matrix of image points
+     */
     private MatOfPoint2f orderPoints(MatOfPoint2f mat) {
         List<Point> pointList = SORT.sortedCopy(mat.toList());
 
@@ -298,7 +342,11 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         return s;
     }
 
-
+    /**
+     * Cleans lines in the image
+     * @param  image   matrix of the image
+     * @return      the image with sharper lines
+     */
     private Mat cleanLines(Mat image) {
         Mat m = image.clone();
         Mat lines = new Mat();
@@ -323,6 +371,7 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         }
         return m;
     }
+
     public static final Function<MatOfPoint, Integer> AREA = new Function<MatOfPoint, Integer>() {
         @Override
         public Integer apply(MatOfPoint input) {
@@ -332,6 +381,11 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
 
     public static final Ordering<MatOfPoint> ORDERING_BY_AREA = Ordering.natural().onResultOf(AREA);
 
+    /**
+     * Finds biggest polygon from image
+     * @param  image   matrix of the image
+     * @return      the matrix point of found biggest polygon
+     */
     private MatOfPoint findBiggerPolygon(Mat image) {
         List<MatOfPoint> contours = Lists.newArrayList();
         Mat hierarchy = new Mat();
@@ -343,27 +397,17 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         }
 
         MatOfPoint max = ORDERING_BY_AREA.max(contours);
-
         return max;
     }
 
-    static List<Integer>  indexesAvailableValues1binInvTrue,indexesAvailableValues1binInvFalse,
-            indexesAvailableValues2binInvTrue,indexesAvailableValues2binInvFalse,
-            indexesOnlyAvailableValues1binInvTrue,indexesOnlyAvailableValues1binInvFalse,
-            indexesOnlyAvailableValues2binInvTrue,indexesOnlyAvailableValues2binInvFalse;
-
-
-
-    static List<Mat> resultWithEmptyCells1BinInvTrue,resultWithEmptyCells1binInvFalse,
-                    resultWithEmptyCells2BinInvTrue,resultWithEmptyCells2binInvFalse ;
-
-    static List<Mat> publicCells;
-
+    /**
+     * Extracts cells from the image matrix
+     * @param  m   matrix of the image
+     * @param  way  first time preprocessing
+     */
     private void extractCells(Mat m,boolean way) {
-
         List<Mat> cells = getCells(m);
         List<Optional<Rect>> digitBoxes = Lists.transform(cells, FeatureDetector.GET_DIGIT_BOX_BYTE_SUM);
-
 
         if(way==true) {
             resultWithEmptyCells1BinInvTrue = Lists.newArrayList();
@@ -386,9 +430,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         for(int i = 0; i < cells.size(); i++ ) {
             Mat cell = cells.get(i).clone();
             com.google.common.base.Optional<Rect> box = digitBoxes.get(i);
-
-
-
             if (box.isPresent() && CONTAIN_DIGIT_SUB_MATRIX_DENSITY.apply(cell)) {
                 bitwise_not(cell,cell);
 
@@ -403,10 +444,6 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
                     //resultWithEmptyCells1BinInvTrue.add(cell);
                     indexesAvailableValues1binInvTrue.add(i);
                     indexesOnlyAvailableValues1binInvTrue.add(i);
-
-
-
-
                 }
                 else{
                     Mat cellCopy=cell.clone();
@@ -418,30 +455,23 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
                     indexesAvailableValues2binInvFalse.add(i);
                     indexesOnlyAvailableValues2binInvFalse.add(i);
                 }
-
             }
             else {
                 if (way == true) {
                     resultWithEmptyCells1BinInvTrue.add(new Mat());
                     indexesAvailableValues1binInvTrue.add(-100);
-
                     resultWithEmptyCells1binInvFalse.add(new Mat());
                     indexesAvailableValues1binInvFalse.add(-100);
-
-
                 } else {
                     resultWithEmptyCells2BinInvTrue.add(new Mat());
                     indexesAvailableValues2binInvTrue.add(-100);
-
                     resultWithEmptyCells2binInvFalse.add(new Mat());
                     indexesAvailableValues2binInvFalse.add(-100);
-
                 }
             }
         }
         //return result;
     }
-
 
     private Mat findImageCenter(Mat image2, boolean binInvTrue){
         // reading image
@@ -493,9 +523,7 @@ public class SudokuImageProcessingActivity extends AppCompatActivity {
         int moreL=rect_min.height+rect_min.y;
         if(moreW>original.width() || moreL>original.height() || rect_min.x==-pad || rect_min.y==-pad) {
             rect_min = new Rect(new Point((original.width()/2)-original.width()/3, (original.height()/2)-original.height()/3), new Size(original.width()/2+original.width()/4,original.height()/2+original.height()/4));
-
         }
-
 
         try {
             result = original.submat(rect_min);

@@ -89,7 +89,6 @@ public class SudokuFurtherEditingImageProcessingActivity extends AppCompatActivi
             chosenListMatWithEmptyCells=SudokuImageProcessingActivity.resultWithEmptyCells2binInvFalse;
             chosenListIndex=SudokuImageProcessingActivity.indexesAvailableValues2binInvFalse;
             bw=SudokuImageProcessingActivity.resultWithEmptyCells2binInvFalse.get(SudokuImageProcessingActivity.indexesOnlyAvailableValues2binInvFalse.get(0));
-
         }
 
         Bitmap img_bitmap = Bitmap.createBitmap(bw.cols(), bw.rows(),Bitmap.Config.ARGB_8888);
@@ -427,7 +426,7 @@ public class SudokuFurtherEditingImageProcessingActivity extends AppCompatActivi
 
                 Mat res=adjustParams(colorimg,false);
                 if(zoomLevelVar>0)
-                 res=findImageCenter(res, zoomLevelVar);
+                    res=findImageCenter(res, zoomLevelVar);
 
                 Bitmap img_bitmap = Bitmap.createBitmap(res.cols(), res.rows(),Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(res, img_bitmap);

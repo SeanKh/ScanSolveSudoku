@@ -42,6 +42,7 @@ import java.util.Random;
 public class SudokuSolverMainActivity extends AppCompatActivity implements View.OnClickListener {
     GridView gridview;
     AssetManager assetManager;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +63,6 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             try {
                 File file = new File(path);
                 FileInputStream inputStream = new FileInputStream(file);
-
-                //InputStream inputStream = assetManager.open(path);
                 gridview.setAdapter(new TextAdapter(this, inputStream));
             } catch (IOException e) {
                 Log.i("Yo", "OH NO");
@@ -74,14 +73,10 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             intent.removeExtra("fromMainActivity");
             try {
                 InputStream inputStream = assetManager.open("empty.in");
-
-
-                //InputStream inputStream = assetManager.open(path);
                 gridview.setAdapter(new TextAdapter(this, inputStream));
             } catch (IOException e) {
                 Log.i("Yo", "OH NO");
             }
-
         }
 
         Button mClickButton1 = (Button)findViewById(R.id.one);
@@ -131,6 +126,10 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Empties all sudoku grid cells
+     * @param  view  view object of Class View is required, because method needs to be visible from corresponding XML file
+     */
     public void emptyGrid(View view) {
         try {
             TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
@@ -140,13 +139,16 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
 
         } catch (IOException e) {
             Log.i("Yo", "OH NO");
-
         }
-
     }
 
+    /**
+     * Saves the text into file with passed file name
+     * @param  text  text to be saved in file
+     * @param  FILE_NAME file name of the file, which will contain the supplied text
+     * @return      the full path to the saved file
+     */
     public String save(String text,String FILE_NAME) {
-        checkPermission();
         String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try
         {
@@ -163,8 +165,6 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             file.getParentFile().createNewFile();
             fOut = new FileOutputStream(file);
             fOut.write(text.getBytes());
-            // 100 means no compression, the lower you go, the stronger the compression
-
             fOut.flush();
             fOut.close();
             fullPath+="/"+FILE_NAME;
@@ -178,59 +178,11 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         return fullPath;
     }
 
-    public void checkPermission(){
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_CONTACTS)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        110);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 110: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
-
-
-
+    /**
+     * Constructs 2 dimensional Integer array
+     * @param  var  1 dimensional Integer array
+     * @return      2 dimensional Integer array
+     */
     public static Integer[][] make2d(Integer[] var){
         Integer[][] out = new Integer[9][9];
         for(int n=0;n<var.length;n++){
@@ -239,8 +191,11 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         return out;
     }
 
+    /**
+     * Solves all Sudoku cells
+     * @param  view  view object of Class View is required, because method needs to be visible from corresponding XML file
+     */
     public void solvePuzzle(View view) {
-
         if(validInput(view)) {
             TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
             SudokuSolver sudokuSolver = new SudokuSolver();
@@ -248,7 +203,7 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
 
             textAdapter.grid2d = temp;
 
-            boolean solved = sudokuSolver.solve(0, 0, textAdapter.grid2d);
+            sudokuSolver.solve(0, 0, textAdapter.grid2d);
             int x = 0;
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
@@ -258,9 +213,12 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
                 }
             }
         }
-
     }
 
+    /**
+     * Solves random cell of Sudoku board
+     * @param  view  view object of Class View is required, because method needs to be visible from corresponding XML file
+     */
     public void solveNextCell(View view){
         Random random=new Random();
         int randomNumber=random.nextInt(80);
@@ -274,10 +232,14 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             sudokuSolver.solve(0, 0, textAdapter.grid2d);
 
             loop(randomNumber, textAdapter);
-
         }
     }
 
+    /**
+     * Assigns value to the random cell of Sudoku board
+     * @param  randomNumber  the cell that will contain the random number
+     * @param  textAdapter  the value that will be assigned to random cell
+     */
     public void loop(int randomNumber,TextAdapter textAdapter){
         int x = 0;
         for (int i = 0; i < 9; i++) {
@@ -293,9 +255,10 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         }
     }
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
-
-
+    /**
+     * Saves the solution at device storage
+     * @param  view  view object of Class View is required, because method needs to be visible from corresponding XML file
+     */
     public void saveSolution(View view){
         TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
         List<Integer> list=new ArrayList<>();
@@ -309,10 +272,16 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
         Timestamp timestamp=new Timestamp(System.currentTimeMillis());
         String FILENAME = "resultAfterSolving"+sdf.format(timestamp)+".txt";
         save(b.toString(),FILENAME);
-
     }
 
-
+    /**
+     * Indicates the wrong cells
+     * @param  textAdapter  instance of TextAdapter Class, where sudoku board cells are stored
+     * @param  view  view object of Class View is required for showing Toast message
+     * @param  loopIndex  the index for required sudoku cell
+     * @param  loopLimit  the limit for the required sudoku cells
+     * @param  loopIncrement  the loop increment for the required sudoku cells
+     */
     public void indicateWrongCells(SudokuSolver sudokuSolver, TextAdapter textAdapter,View view, int loopIndex, int loopLimit,int loopIncrement){
         List<String> wrongNumbers=new ArrayList<>();
 
@@ -345,18 +314,16 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
                 Toast.LENGTH_LONG).show();
     }
 
-
-
+    /**
+     * Checks the inputted sudoku cells
+     * @param  view  view object of Class View is required, because method needs to be visible from corresponding XML file
+     * @return      boolean value indicating the validity of inputted sudoku cells
+     */
     public boolean validInput(View view) {
-
         TextAdapter textAdapter = (TextAdapter) gridview.getAdapter();
-
         SudokuSolver sudokuSolver = new SudokuSolver();
-
         sudokuSolver.valid_board(textAdapter.grid2d);
-
         boolean valid=sudokuSolver.getValid();
-
 
         if(valid==false){
             if(sudokuSolver.getRowOrCol()!=null) {
@@ -385,11 +352,9 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             {
                 EditText textView = (EditText) gridview.getChildAt(n);
                 textView.setTextColor(Color.BLACK);
-
             }
             return true;
         }
-
     }
 
 
@@ -434,7 +399,6 @@ public class SudokuSolverMainActivity extends AppCompatActivity implements View.
             }
         }
         textAdapter.updateGrid();
-
     }
 }
 

@@ -11,11 +11,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Changed from https://github.com/MindorksOpenSource/AndroidTensorFlowMNISTExample/blob/master/app/src/main/java/com/mindorks/tensorflowexample/TensorFlowImageClassifier.java
- * Created by marianne-linhares on 20/04/17.
- */
-
 public class Classifier {
 
     // Only returns if at least this confidence
@@ -41,7 +36,6 @@ public class Classifier {
         while ((line = br.readLine()) != null) {
             labels.add(line);
         }
-
         br.close();
         return labels;
     }
@@ -85,7 +79,6 @@ public class Classifier {
                 ans.update(output[i], labels.get(i));
             }
         }
-
         return ans;
     }
 }

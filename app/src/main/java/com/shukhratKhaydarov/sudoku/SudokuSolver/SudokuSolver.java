@@ -4,23 +4,102 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SudokuSolver {
-    /**
-     * From:
-     * http://dannylesnik.blogspot.com/2011/01/hibernate-collection-mapping.html
-     */
-
     private static final int UNASSIGNED = 0;
+    public int InvalidRowInBox, InvalidColInBox, invalidLine;
+    String rowOrCol;
+    boolean valid;
 
+    /**
+     * Gets InvalidRowInBox
+     * @return      value of InvalidRowInBox
+     */
+    public int getInvalidRowInBox() {
+        return InvalidRowInBox;
+    }
 
-    // Function to check if a given row is valid. It will return:
-    // -1 if the row contains an invalid value
-    // 0 if thr row contains repeated values
-    // 1 is the row is valid.
+    /**
+     * Sets InvalidRowInBox
+     * @param   InvalidRowInBox   new value for InvalidRowInBox
+     */
+    public void setInvalidRowInBox(int InvalidRowInBox) {
+        this.InvalidRowInBox = InvalidRowInBox;
+    }
+
+    /**
+     * Gets InvalidColInBox
+     * @return      value of InvalidColInBox
+     */
+    public int getInvalidColInBox() {
+        return InvalidColInBox;
+    }
+
+    /**
+     * Sets InvalidColInBox
+     * @param   InvalidColInBox   new value for InvalidColInBox
+     */
+    public void setInvalidColInBox(int InvalidColInBox) {
+        this.InvalidColInBox = InvalidColInBox;
+    }
+
+    /**
+     * Gets rowOrCol
+     * @return      value of rowOrCol
+     */
+    public String getRowOrCol() {
+        return rowOrCol;
+    }
+
+    /**
+     * Sets rowOrCol
+     * @param   rowOrCol   new value for rowOrCol
+     */
+    public void setRowOrCol(String rowOrCol) {
+        this.rowOrCol = rowOrCol;
+    }
+
+    /**
+     * Gets invalidLine
+     * @return      value of invalidLine
+     */
+    public int getInvalidLine() {
+        return invalidLine;
+    }
+
+    /**
+     * Sets invalidLine
+     * @param   invalidLine   new value for invalidLine
+     */
+    public void setInvalidLine(int invalidLine) {
+        this.invalidLine = invalidLine;
+    }
+
+    /**
+     * Gets valid
+     * @return      value of valid
+     */
+    public boolean getValid() {
+        return valid;
+    }
+
+    /**
+     * Sets valid
+     * @param   valid   new value for valid
+     */
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    /**
+     * Checks a given row for being valid.
+     * @param  row  cell row of Sudoku board
+     * @param  grid  2 dimensional Integer array containing Sudoku board cells
+     * @return      -1 if the row contains an invalid value, 0 if thr row contains repeated values, 1 is the row is valid.
+     */
     public static int valid_row(int row, Integer [][] grid){
         Integer temp[] = grid[row];
         Set<Integer> set = new HashSet<Integer>();
         for (int value : temp) {
-            // Checking for values outside 0 and 9;
+            // Values outside 0 and 9 are checked
             // 0 is considered valid because it
             // denotes an empty cell.
             // Removing zeros and the checking for values and
@@ -39,14 +118,17 @@ public class SudokuSolver {
         }
         return 1;
     }
-    // Function to check if a given column is valid. It will return:
-    // -1 if the column contains an invalid value
-    // 0 if the column contains repeated values
-    // 1 is the column is valid.
+
+    /**
+     * Checks a given column for being valid.
+     * @param  col  cell column of Sudoku board
+     * @param  grid  2 dimensional Integer array containing Sudoku board cells
+     * @return      -1 if the column contains an invalid value, 0 if the column contains repeated values, 1 is the column is valid.
+     */
     public static int valid_col(int col, Integer [][] grid){
         Set<Integer>set = new HashSet<Integer>();
         for (int i =0 ; i< 9; i++) {
-            // Checking for values outside 0 and 9;
+            // Values outside 0 and 9 are checked;
             // 0 is considered valid because it
             // denotes an empty cell.
             // Removing zeros and the checking for values and
@@ -66,36 +148,18 @@ public class SudokuSolver {
         return 1;
     }
 
-    public int getInvalidRowInBox() {
-        return InvalidRowInBox;
-    }
-
-    public void setInvalidRowInBox(int InvalidRowInBox) {
-        this.InvalidRowInBox = InvalidRowInBox;
-    }
-
-    public int InvalidRowInBox;
-
-    public int getInvalidColInBox() {
-        return InvalidColInBox;
-    }
-
-    public void setInvalidColInBox(int InvalidColInBox) {
-        this.InvalidColInBox = InvalidColInBox;
-    }
-
-    public int InvalidColInBox;
-    // Function to check if all the subsquares are valid. It will return:
-    // -1 if a subsquare contains an invalid value
-    // 0 if a subsquare contains repeated values
-    // 1 if the subsquares are valid.
+    /**
+     * Checks all the subsquares for being valid.
+     * @param  grid  2 dimensional Integer array containing Sudoku board cells
+     * @return      -1 if a subsquare contains an invalid value, 0 if a subsquare contains repeated values, 1 if the subsquares are valid.
+     */
     public int valid_subsquares(Integer [][] grid){
         for (int row = 0 ; row < 9; row = row + 3) {
             for (int col = 0; col < 9; col = col + 3) {
                 Set<Integer>set = new HashSet<Integer>();
                 for(int r = row; r < row+3; r++) {
                     for(int c= col; c < col+3; c++){
-                        // Checking for values outside 0 and 9;
+                        // Values outside 0 and 9 are checked;
                         // 0 is considered valid because it
                         // denotes an empty cell.
                         // Removing zeros and the checking for values and
@@ -119,7 +183,11 @@ public class SudokuSolver {
         }
         return 1;
     }
-    //Function to check if the board invalid.
+
+    /**
+     * Checks the board validity.
+     * @param  grid  2 dimensional Integer array containing Sudoku board cells
+     */
     public void valid_board(Integer [][] grid){
         // Checking the rows and columns.
         for (int i =0 ; i< 9; i++) {
@@ -137,14 +205,12 @@ public class SudokuSolver {
                 setValid(false);
                 return;
             }
-
         }
         int res3 = valid_subsquares(grid);
         // if any one the subsquares is invalid, then the board is invalid.
         if (res3 < 1) {
             System.out.println( "The board is invalid." );
             setValid(false);
-
         }
         else {
             System.out.println( "The board is valid." );
@@ -153,42 +219,14 @@ public class SudokuSolver {
         }
     }
 
-
-    public String getRowOrCol() {
-        return rowOrCol;
-    }
-
-    public void setRowOrCol(String rowOrCol) {
-        this.rowOrCol = rowOrCol;
-    }
-
-    String rowOrCol;
-
-
-    public int getInvalidLine() {
-        return invalidLine;
-    }
-
-    public void setInvalidLine(int invalidCell) {
-        this.invalidLine = invalidCell;
-    }
-
-    int invalidLine;
-
-    public boolean getValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
-    boolean valid;
-
-
-
+    /**
+     * Checks all the subsquares for being valid.
+     * @param  row  cell row of Sudoku board
+     * @param  col  cell column of Sudoku board
+     * @param  cells  2 dimensional Integer array containing Sudoku board cells
+     * @return      boolean value indicating if the cell is solved
+     */
     public boolean solve(int row, int col, Integer[][] cells) {
-
         if (row == 9) {
             row = 0;
             if (++col == 9) {
@@ -210,7 +248,13 @@ public class SudokuSolver {
         return false;
     }
 
-    // we check if a possible number is already in a row
+    /**
+     * Checks if supplied number is already in a row
+     * @param  row  cell row of Sudoku board
+     * @param  number  number to be compared with
+     * @param  cells  2 dimensional Integer array containing Sudoku board cells
+     * @return      boolean value indicating the validity
+     */
     private boolean isInRow(int row, int number,Integer[][] cells) {
         for (int i = 0; i < 9; i++)
             if (cells[row][i] == number)
@@ -219,7 +263,13 @@ public class SudokuSolver {
         return false;
     }
 
-    // we check if a possible number is already in a column
+    /**
+     * Checks if supplied number is already in a column
+     * @param  col  cell column of Sudoku board
+     * @param  number  number to be compared with
+     * @param  cells  2 dimensional Integer array containing Sudoku board cells
+     * @return      boolean value indicating the validity
+     */
     private boolean isInCol(int col, int number,Integer[][] cells) {
         for (int i = 0; i < 9; i++)
             if (cells[i][col] == number)
@@ -228,7 +278,14 @@ public class SudokuSolver {
         return false;
     }
 
-    // we check if a possible number is in its 3x3 box
+    /**
+     * Checks if supplied number is in its 3x3 box
+     * @param  row  cell row of Sudoku board
+     * @param  col  cell column of Sudoku board
+     * @param  number  number to be compared with
+     * @param  cells  2 dimensional Integer array containing Sudoku board cells
+     * @return      boolean value indicating the validity
+     */
     private boolean isInBox(int row, int col, int number,Integer[][] cells) {
         int r = row - row % 3;
         int c = col - col % 3;
@@ -241,14 +298,19 @@ public class SudokuSolver {
         return false;
     }
 
-    // combined method to check if a number possible to a row,col position is ok
+    /**
+     * Checks if a number at corresponding row,col position is ok
+     * @param  row  cell row of Sudoku board
+     * @param  col  cell column of Sudoku board
+     * @param  number  number to be compared with
+     * @param  cells  2 dimensional Integer array containing Sudoku board cells
+     * @return      boolean value indicating the validity
+     */
     public boolean isOk(int row, int col, int number,Integer[][] cells) {
         boolean isInsideRow=isInRow(row,number,cells);
         boolean isInsideCol=isInCol(col,number,cells);
         boolean isInsideBox=isInBox(row,col,number,cells);
         return !isInsideRow  &&  !isInsideCol  &&  !isInsideBox;
     }
-
-
 }
 

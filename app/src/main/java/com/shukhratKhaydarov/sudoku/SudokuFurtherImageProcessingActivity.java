@@ -109,9 +109,4 @@ public class SudokuFurtherImageProcessingActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
-
 }

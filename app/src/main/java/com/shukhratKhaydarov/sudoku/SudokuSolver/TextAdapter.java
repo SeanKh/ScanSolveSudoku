@@ -25,52 +25,24 @@ public class TextAdapter extends BaseAdapter {
     private Context mContext;
     public Integer[] grid = new Integer[81];
     public Integer[][] grid2d = new Integer[9][9];
-
-    public TextView getTextViewNeeded() {
-        return textViewNeeded;
-    }
-
-    public void setTextViewNeeded(TextView textViewNeeded) {
-        this.textViewNeeded = textViewNeeded;
-    }
-
-    public TextView textViewNeeded;
-
-    public int getClickedButton() {
-        return clickedButton;
-    }
-
-    public void setClickedButton(int clickedButton) {
-        this.clickedButton = clickedButton;
-    }
-
-    public int clickedButton=10;
-
-    public int getGridCellClicked() {
-        return gridCellClicked;
-    }
-
-    public void setGridCellClicked(int gridCellClicked) {
-        this.gridCellClicked = gridCellClicked;
-    }
-
     public int gridCellClicked=100;
+    public TextView textViewNeeded;
+    public int clickedButton=10;
+    boolean clickedOnCell=false;
+    /**
+     * Class constructor.
+     */
     public TextAdapter(Context c, InputStream inputStream) throws IOException {
         mContext = c;
-
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String line;
-
-
         int i = 0;
         int row = 0, col = 0;
         while((line = in.readLine()) != null){
             String[] lineArray = line.split(" ");
             for (String element : lineArray) {
                 //element=element.replaceAll("\\s+","");
-                if(element.equals(" ") || element.equals("")){
-
-                }
+                if(element.equals(" ") || element.equals("")){}
                 else if (element.equals("0")) {
                     grid[i] = 0;
                     if (col % 9 == 0 && col != 0) {
@@ -94,22 +66,97 @@ public class TextAdapter extends BaseAdapter {
         }
     }
 
+
+    /**
+     * Gets textViewNeeded
+     * @return      value of textViewNeeded
+     */
+    public TextView getTextViewNeeded() {
+        return textViewNeeded;
+    }
+
+    /**
+     * Sets textViewNeeded
+     * @param   textViewNeeded   new value for textViewNeeded
+     */
+    public void setTextViewNeeded(TextView textViewNeeded) {
+        this.textViewNeeded = textViewNeeded;
+    }
+
+    /**
+     * Gets clickedButton
+     * @return      value of clickedButton
+     */
+    public int getClickedButton() {
+        return clickedButton;
+    }
+
+    /**
+     * Sets clickedButton
+     * @param   clickedButton   new value for clickedButton
+     */
+    public void setClickedButton(int clickedButton) {
+        this.clickedButton = clickedButton;
+    }
+
+    /**
+     * Gets gridCellClicked
+     * @return      value of gridCellClicked
+     */
+    public int getGridCellClicked() {
+        return gridCellClicked;
+    }
+
+    /**
+     * Sets gridCellClicked
+     * @param   gridCellClicked   new value for gridCellClicked
+     */
+    public void setGridCellClicked(int gridCellClicked) {
+        this.gridCellClicked = gridCellClicked;
+    }
+
+    /**
+     * Gets clickedOnCell
+     * @return      value of clickedOnCell
+     */
+    public boolean getClickedOnCell() {
+        return clickedOnCell;
+    }
+
+    /**
+     * Gets 81
+     * @return      value of 81
+     */
     public int getCount() {
         return 81;
     }
 
+    /**
+     * Gets null
+     * @return      null
+     */
     public Object getItem(int position) {
         return null;
     }
 
+    /**
+     * Gets position
+     * @return      0
+     */
     public long getItemId(int position) {
         return 0;
     }
 
-    // create a new ImageView for each item referenced by the Adapter
+
+    /**
+     * Creates a new ImageView for each item referenced by the Adapter
+     * @param   position   position of sudoku cell
+     * @param   convertView   view, where sudoku board is located
+     * @param   parent    parent viewgroup
+     * @return      text of updated sudoku cell
+     */
     public View getView(final int position, final View convertView, ViewGroup parent) {
         EditText textView;
-
 
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
@@ -125,65 +172,45 @@ public class TextAdapter extends BaseAdapter {
             InputFilter[] FilterArray = new InputFilter[1];
             FilterArray[0] = new InputFilter.LengthFilter(1);
             textView.setFilters(FilterArray);
-
-
         } else {
             textView = (EditText) convertView;
         }
         if (grid[position] != 0) {
             textView.setEnabled(true);
             textView.setText(String.valueOf(grid[position]));
-
-
         }
+        textView.setOnTouchListener(new View.OnTouchListener() {
 
-            textView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        if(getTextViewNeeded()!=null) getTextViewNeeded().clearAnimation();
-                        if(getTextViewNeeded()!=textView) clickedOnCell=false;
-                        setGridCellClicked(position);
-                        long color = 0xffffffffL & textView.getCurrentTextColor();
-                        //Toast.makeText(view.getContext(), Long.toHexString(color),Toast.LENGTH_LONG).show();
-                        //textView.getBackground().setAlpha(100);
-                        //textView.setBackgroundColor(Color.parseColor("#a4c639"));
-                        //textView.setBackgroundResource(R.color.colorAccent);
-
-
-                        Animation animation= AnimationUtils.loadAnimation(view.getContext(), R.anim.scale);
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if(getTextViewNeeded()!=null) getTextViewNeeded().clearAnimation();
+                    if(getTextViewNeeded()!=textView) clickedOnCell=false;
+                    setGridCellClicked(position);
+                    Animation animation= AnimationUtils.loadAnimation(view.getContext(), R.anim.scale);
+                    textView.clearAnimation();
+                    if(clickedOnCell==true)
+                    {
                         textView.clearAnimation();
-                        if(clickedOnCell==true)
-                        {
-                            textView.clearAnimation();
-                            clickedOnCell=false;
-                        }
-                        else{
-                            textView.startAnimation(animation);
-                            clickedOnCell=true;
-                        }
-                        setTextViewNeeded(textView);
-                        updateGrid();
+                        clickedOnCell=false;
                     }
-                    return true;
+                    else{
+                        textView.startAnimation(animation);
+                        clickedOnCell=true;
+                    }
+                    setTextViewNeeded(textView);
+                    updateGrid();
                 }
-            });
-
-
+                return true;
+            }
+        });
         return textView;
     }
 
-    public boolean getClickedOnCell() {
-        return clickedOnCell;
-    }
-
-    public void setClickedOnCell(boolean clickedOnCell) {
-        this.clickedOnCell = clickedOnCell;
-    }
-
-    boolean clickedOnCell=false;
+    /**
+     * Updates Sudoku grid cells
+     */
     @SuppressWarnings("ResourceAsColor")
     public void updateGrid(){
         if(getGridCellClicked()!=100) {

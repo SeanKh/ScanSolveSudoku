@@ -3,26 +3,23 @@ package com.shukhratKhaydarov.sudoku;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 
-/**
- * Created by jose on 3/4/14.
- */
+
 public class Board {
     public Integer cellSize;
     public Integer size;
     public Integer[][] m;
-
+    /**
+     * Class constructor.
+     */
     public Board() {
     }
 
-    public static Board of(Integer size) {
-        Board b = new Board();
-
-        b.cellSize = Double.valueOf(Math.sqrt(size)).intValue();
-        b.m = new Integer[size][size];
-        b.size = size;
-        return b;
-    }
-
+    /**
+     * Creates a sudoku board
+     * @param   size    board size
+     * @param   board   board values
+     * @return      text of updated sudoku cell
+     */
     public static Board of(Integer size, String board) {
         Board b = new Board();
 
@@ -44,7 +41,6 @@ public class Board {
             b.m[row][col] = Integer.valueOf(cell);
             i++;
         }
-
         return b;
     }
 
